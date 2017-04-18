@@ -45,30 +45,19 @@ Q_OBJECT
   };
   explicit WorkArea(QObject *parent = 0);
   void StartInsertMode(Element element) {
-    insertMode_ = {element, InsertPhase::kNotInserted};};
+    insertMode_ = {element, InsertPhase::kNotInserted};
+  }
   void AbortInsertMode();
 
-protected:
+ protected:
   void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+  void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 
-private:
-  enum class InsertModeType {
-    kNoInsert,
-    kState,
-    kEntryPoint
-  };
-  enum class InsertModePhase {
-    kNotInserted,
-    kMoving
-  };
+ private:
   struct InsertMode {
     Element element;
     InsertPhase phase;
   };
-  InsertModeType insertModeType_;
-  InsertModePhase insertModePhase_;
-  std::unique_ptr<QGraphicsItem> temporaryInsertElement_;
-  //QGraphicsItem *temporaryInsertElement_;
   InsertMode insertMode_;
 };
 

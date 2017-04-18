@@ -22,67 +22,62 @@
 
 #include "WorkArea.hpp"
 
-#include <memory>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <memory>
 
 #include "State.hpp"
 
-WorkArea::WorkArea(QObject *parent) :
-		QGraphicsScene(parent), insertModeType_(
-				InsertModeType::kNoInsert), insertModePhase_(
-				InsertModePhase::kNotInserted), temporaryInsertElement_(nullptr) {
+WorkArea::WorkArea(QObject *parent)
+    : QGraphicsScene(parent),
+      insertMode_ { Element::kEntryPoint, InsertPhase::kNotInserted } {
 }
 
+// TODO: Move to View?
 void WorkArea::AbortInsertMode() {
-	insertMode_.phase = InsertPhase::kNotStarted;
-	// Cleanup temporary inserted object
-	if (temporaryInsertElement_ != nullptr) {
-		removeItem(temporaryInsertElement_.get());
-		temporaryInsertElement_.reset();
-		temporaryInsertElement_ = nullptr;
-	}
+  if (insertMode_.phase == InsertPhase::kTemporaryInserted) {
+    // Cleanup temporary inserted object
+    removeItem(items().first());
+  }
+  insertMode_.phase = InsertPhase::kNotStarted;
 }
 
 void WorkArea::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-	if (insertMode_.phase != InsertPhase::kNotStarted) {
-		if (insertMode_.element == Element::kEntryPoint) {
-			if (insertMode_.phase == InsertPhase::kNotInserted) {
-				qDebug() << "Insert entry point";
-				// TODO: Replace with entry point
-				temporaryInsertElement_.reset(new State("foo",
-						mouseEvent->scenePos().rx(),
-						mouseEvent->scenePos().ry(), 20, 20));
-				addItem(temporaryInsertElement_.get());
-				insertMode_.phase = InsertPhase::kTemporaryInserted;
-			}
-			temporaryInsertElement_->setPos(mouseEvent->scenePos());
-			qDebug() << "Moving entry point " << ": x: "
-					<< temporaryInsertElement_->pos().rx() << " y: "
-					<< temporaryInsertElement_->pos().ry();
-		} else if (insertMode_.element == Element::kState) {
-			if (insertMode_.phase == InsertPhase::kNotInserted) {
-				qDebug() << "Insert new state";
-				temporaryInsertElement_.reset(new State("foo",
-						mouseEvent->scenePos().rx(),
-						mouseEvent->scenePos().ry(), 20, 20));
-				addItem(temporaryInsertElement_.get());
-				insertMode_.phase = InsertPhase::kTemporaryInserted;
-			}
-			temporaryInsertElement_->setPos(mouseEvent->scenePos());
-			qDebug() << "Moving state " << ": x: "
-					<< temporaryInsertElement_->pos().rx() << " y: "
-					<< temporaryInsertElement_->pos().ry();
-		} else {
-			qDebug() << "Exception can occur if ending up here!";
-		}
-	}
-	for (auto &view : views()) {
-		if (view->viewport()->hasMouseTracking()) {
-			qDebug() << "With mouse tracking.";
-		} else {
-			qDebug() << "Without mouse tracking.";
-		}
-	}
-	QGraphicsScene::mouseMoveEvent(mouseEvent);
+  if (insertMode_.phase != InsertPhase::kNotStarted) {
+    if (insertMode_.phase == InsertPhase::kNotInserted) {
+      if (insertMode_.element == Element::kEntryPoint) {
+        qDebug() << "Insert entry point";
+        // TODO: Replace with entry point
+        addItem(new State("foo", mouseEvent->scenePos().rx(), mouseEvent->scenePos().ry(), 20, 20));
+        insertMode_.phase = InsertPhase::kTemporaryInserted;
+      } else if (insertMode_.phase == InsertPhase::kNotInserted) {
+        qDebug() << "Insert new state";
+        addItem(new State("foo", mouseEvent->scenePos().rx(), mouseEvent->scenePos().ry(), 20, 20));
+        insertMode_.phase = InsertPhase::kTemporaryInserted;
+      }
+    }
+    items().first()->setPos(mouseEvent->scenePos());
+    qDebug() << "Moving entry point " << ": x: " << items().first()->pos().rx() << " y: "
+             << items().first()->pos().ry();
+  }
+
+  for (auto &view : views()) {
+    if (view->viewport()->hasMouseTracking()) {
+      qDebug() << "With mouse tracking.";
+    } else {
+      qDebug() << "Without mouse tracking.";
+    }
+  }
+  QGraphicsScene::mouseMoveEvent(mouseEvent);
+}
+
+void WorkArea::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+  qDebug() << "WorkArea clicked";
+  insertMode_.phase = InsertPhase::kNotStarted;
+  if (insertMode_.phase != InsertPhase::kNotStarted) {
+//    insertMode_.phase = InsertPhase::kNotStarted;
+//    currentAction_->setChecked(false);
+//    currentAction_ = nullptr;
+  }
+  QGraphicsScene::mousePressEvent(mouseEvent);
 }
