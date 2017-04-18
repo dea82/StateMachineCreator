@@ -20,40 +20,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
-
-#include <QMainWindow>
-
-#include <QStatusBar>
-#include <QToolBar>
-#include <QActionGroup>
-
 #include "InsertElementToolBar.hpp"
-#include "WorkArea.hpp"
-#include "WorkAreaView.hpp"
 
-class MainWindow : public QMainWindow {
-Q_OBJECT
+InsertElementToolBar::InsertElementToolBar(QWidget* parent)
+    : actionGroup_(new QActionGroup(this)),
+      currentCheckedAction_(nullptr),
+      QToolBar(parent) {
+  setMovable(false);
+  connect(actionGroup_, &QActionGroup::triggered, this, &InsertElementToolBar::ActionTriggered);
+}
 
- public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
- public slots:
-  void ActionPressed(InsertElementToolBar::Elements element, bool checked);
+void InsertElementToolBar::AddAction(const QIcon& icon, const QString& text, const Elements& element) {
+  auto action = new QAction(icon, text, actionGroup_);
+  action->setCheckable(true);
+  action->setData(QVariant::fromValue(element));
+  this->addAction(action);
+}
 
- private:
-  InsertElementToolBar *insertToolBar_;
-  QStatusBar *statusBar_;
-  WorkAreaView *graphicsView_;
-  WorkArea *scene_;
+void InsertElementToolBar::UncheckCurrentAction() {
+  if (currentCheckedAction_) {
+    currentCheckedAction_->setChecked(false);
+    currentCheckedAction_ = nullptr;
+  }
+}
 
-  QAction* insertEntryPointAction_;
-  QAction* insertStateAction_;
-};
-
-#endif  // CREATOR_MAINWINDOW_HPP_
+void InsertElementToolBar::ActionTriggered(QAction* action) {
+  if (action == currentCheckedAction_) {
+    UncheckCurrentAction();
+  } else {
+    currentCheckedAction_ = action;
+  }
+  QVariant data = action->data();
+  if (data.canConvert<Elements>()) {
+    emit Triggered(action->data().value<Elements>(), action->isChecked());
+  } else {
+    // TODO: Error output - not possible to convert QVariant to expected data.
+  }
+}

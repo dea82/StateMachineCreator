@@ -20,40 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#ifndef CREATOR_INSERTELEMENTTOOLBAR_HPP_
+#define CREATOR_INSERTELEMENTTOOLBAR_HPP_
 
-#include <QMainWindow>
-
-#include <QStatusBar>
-#include <QToolBar>
+#include <QAction>
 #include <QActionGroup>
+#include <QToolBar>
 
-#include "InsertElementToolBar.hpp"
-#include "WorkArea.hpp"
-#include "WorkAreaView.hpp"
-
-class MainWindow : public QMainWindow {
+class InsertElementToolBar : public QToolBar {
 Q_OBJECT
 
  public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  enum class InsertActions {
+  enum class Elements {
     kEntryPoint,
     kState
   };
+
+  explicit InsertElementToolBar(QWidget* parent);
+  void AddAction(const QIcon& icon, const QString& text, const Elements& element);
+
  public slots:
-  void ActionPressed(InsertElementToolBar::Elements element, bool checked);
+  void UncheckCurrentAction();
+
+ signals:
+  void Triggered(Elements element, bool checked);
+
+ private slots:
+  void ActionTriggered(QAction* action);
 
  private:
-  InsertElementToolBar *insertToolBar_;
-  QStatusBar *statusBar_;
-  WorkAreaView *graphicsView_;
-  WorkArea *scene_;
-
-  QAction* insertEntryPointAction_;
-  QAction* insertStateAction_;
+  QAction* currentCheckedAction_;
+  QActionGroup* actionGroup_;
 };
+Q_DECLARE_METATYPE(InsertElementToolBar::Elements)
 
-#endif  // CREATOR_MAINWINDOW_HPP_
+#endif  // CREATOR_INSERTELEMENTTOOLBAR_HPP_

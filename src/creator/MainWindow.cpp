@@ -26,13 +26,11 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QGraphicsView>
-#include <QActionGroup>
 
 #include "WorkArea.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
-      currentAction_(nullptr) {
+    : QMainWindow(parent) {
   setWindowTitle(tr("State Machine Creator"));
 
   auto screenGeometry = QApplication::desktop()->screenGeometry();
@@ -42,24 +40,15 @@ MainWindow::MainWindow(QWidget *parent)
   setStatusBar(statusBar_);
 
   // Initialize tool bar
-  insertToolBar_ = new QToolBar(this);
-  insertToolBar_->setMovable(false);
+  insertToolBar_ = new InsertElementToolBar(this);
+  insertToolBar_->AddAction(QIcon(":/icons/entrypoint_black.svg"), tr("Entry Point"),
+                            InsertElementToolBar::Elements::kEntryPoint);
+  insertToolBar_->AddAction(QIcon(":/icons/state_black.svg"), tr("State"), InsertElementToolBar::Elements::kState);
 
   addToolBar(Qt::LeftToolBarArea, insertToolBar_);
   addToolBar(Qt::TopToolBarArea, new QToolBar(this));
 
-  QActionGroup *insertActions = new QActionGroup(this);
-
-  // Initialize actions
-  insertEntryPointAction_ = new QAction(QIcon(":/icons/entrypoint_black.svg"), "Entry Point", insertActions);
-  insertEntryPointAction_->setCheckable(true);
-
-  insertStateAction_ = new QAction(QIcon(":/icons/state_black.svg"), "State", insertActions);
-  insertStateAction_->setCheckable(true);
-
-  insertToolBar_->addActions(insertActions->actions());
-
-  graphicsView_ = new QGraphicsView(this);
+  graphicsView_ = new WorkAreaView(this);
   scene_ = new WorkArea(this);
   scene_->addText("Hello, world!");
   graphicsView_->setScene(scene_);
@@ -73,29 +62,22 @@ MainWindow::MainWindow(QWidget *parent)
   int w = graphicsView_->size().width();
   qDebug() << "GraphicsView width: " << w;
   graphicsView_->setSceneRect(QRect(-w / 2, -h / 2, w, h));
-  connect(insertActions, &QActionGroup::triggered, this, &MainWindow::InsertActionPressed);
+
+  //
+  connect(insertToolBar_, &InsertElementToolBar::Triggered, this, &MainWindow::ActionPressed);
+  connect(graphicsView_, &WorkAreaView::Clicked, insertToolBar_, &InsertElementToolBar::UncheckCurrentAction);
 }
 
 MainWindow::~MainWindow() {
 }
 
-void MainWindow::InsertActionPressed(QAction *action) {
-  if (action == currentAction_) {
-    action->setChecked(false);
-    graphicsView_->viewport()->setMouseTracking(false);
-    currentAction_ = nullptr;
-    scene_->AbortInsertMode();
+void MainWindow::ActionPressed(InsertElementToolBar::Elements element, bool checked) {
+  if (checked) {
+    qDebug() << "Checked";
   } else {
-    if (currentAction_ != nullptr) {
-      // Switched active action. Abort action first to cleanup temporary elements
-      scene_->AbortInsertMode();
-    }
-    graphicsView_->viewport()->setMouseTracking(true);
-    currentAction_ = action;
-    if (action == insertEntryPointAction_) {
-      scene_->StartInsertMode(WorkArea::Element::kEntryPoint);
-    } else if (action == insertStateAction_) {
-      scene_->StartInsertMode(WorkArea::Element::kState);
-    }
+    qDebug() << "Unchecked";
+  }
+  if (element == InsertElementToolBar::Elements::kEntryPoint) {
+    qDebug() << "EntryPoint";
   }
 }

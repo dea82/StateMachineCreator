@@ -20,40 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#ifndef CREATOR_WORKAREAVIEW_HPP_
+#define CREATOR_WORKAREAVIEW_HPP_
 
-#include <QMainWindow>
+#include <QAction>
+#include <QGraphicsView>
 
-#include <QStatusBar>
-#include <QToolBar>
-#include <QActionGroup>
-
-#include "InsertElementToolBar.hpp"
-#include "WorkArea.hpp"
-#include "WorkAreaView.hpp"
-
-class MainWindow : public QMainWindow {
-Q_OBJECT
-
+class WorkAreaView : public QGraphicsView {
+  Q_OBJECT
  public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
- public slots:
-  void ActionPressed(InsertElementToolBar::Elements element, bool checked);
-
+  explicit WorkAreaView(QWidget *parent = 0);
+ protected:
+  void mousePressEvent(QMouseEvent *event) override;
+ signals:
+  void Clicked();
  private:
-  InsertElementToolBar *insertToolBar_;
-  QStatusBar *statusBar_;
-  WorkAreaView *graphicsView_;
-  WorkArea *scene_;
-
-  QAction* insertEntryPointAction_;
-  QAction* insertStateAction_;
+  QAction *currentAction_;
 };
 
-#endif  // CREATOR_MAINWINDOW_HPP_
+#endif  // CREATOR_WORKAREAVIEW_HPP_
