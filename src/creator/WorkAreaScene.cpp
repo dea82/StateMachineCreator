@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "WorkArea.hpp"
+#include "WorkAreaScene.hpp"
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -28,13 +28,13 @@
 
 #include "State.hpp"
 
-WorkArea::WorkArea(QObject *parent)
+WorkAreaScene::WorkAreaScene(QObject *parent)
     : QGraphicsScene(parent),
       insertMode_ { Element::kEntryPoint, InsertPhase::kNotInserted } {
 }
 
 // TODO: Move to View?
-void WorkArea::AbortInsertMode() {
+void WorkAreaScene::AbortInsertMode() {
   if (insertMode_.phase == InsertPhase::kTemporaryInserted) {
     // Cleanup temporary inserted object
     removeItem(items().first());
@@ -42,7 +42,7 @@ void WorkArea::AbortInsertMode() {
   insertMode_.phase = InsertPhase::kNotStarted;
 }
 
-void WorkArea::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+void WorkAreaScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
   if (insertMode_.phase != InsertPhase::kNotStarted) {
     if (insertMode_.phase == InsertPhase::kNotInserted) {
       if (insertMode_.element == Element::kEntryPoint) {
@@ -71,7 +71,7 @@ void WorkArea::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
   QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
-void WorkArea::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+void WorkAreaScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
   qDebug() << "WorkArea clicked";
   insertMode_.phase = InsertPhase::kNotStarted;
   if (insertMode_.phase != InsertPhase::kNotStarted) {

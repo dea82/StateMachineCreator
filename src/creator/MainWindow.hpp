@@ -30,7 +30,7 @@
 #include <QActionGroup>
 
 #include "InsertElementToolBar.hpp"
-#include "WorkArea.hpp"
+#include "WorkAreaScene.hpp"
 #include "WorkAreaView.hpp"
 
 class MainWindow : public QMainWindow {
@@ -44,13 +44,14 @@ Q_OBJECT
     kState
   };
  public slots:
-  void ActionPressed(InsertElementToolBar::Elements element, bool checked);
+  // TODO: Remove if unused.
+  void ActionPressed(WorkAreaView::InsertElement element, bool checked);
 
  private:
   InsertElementToolBar *insertToolBar_;
   QStatusBar *statusBar_;
   WorkAreaView *graphicsView_;
-  WorkArea *scene_;
+  WorkAreaScene *scene_;
 
   QAction* insertEntryPointAction_;
   QAction* insertStateAction_;

@@ -30,7 +30,7 @@ InsertElementToolBar::InsertElementToolBar(QWidget* parent)
   connect(actionGroup_, &QActionGroup::triggered, this, &InsertElementToolBar::ActionTriggered);
 }
 
-void InsertElementToolBar::AddAction(const QIcon& icon, const QString& text, const Elements& element) {
+void InsertElementToolBar::AddAction(const QIcon& icon, const QString& text, const WorkAreaView::InsertElement& element) {
   auto action = new QAction(icon, text, actionGroup_);
   action->setCheckable(true);
   action->setData(QVariant::fromValue(element));
@@ -51,8 +51,8 @@ void InsertElementToolBar::ActionTriggered(QAction* action) {
     currentCheckedAction_ = action;
   }
   QVariant data = action->data();
-  if (data.canConvert<Elements>()) {
-    emit Triggered(action->data().value<Elements>(), action->isChecked());
+  if (data.canConvert<WorkAreaView::InsertElement>()) {
+    emit Triggered(action->data().value<WorkAreaView::InsertElement>(), action->isChecked());
   } else {
     // TODO: Error output - not possible to convert QVariant to expected data.
   }

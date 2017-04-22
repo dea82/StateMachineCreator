@@ -26,7 +26,12 @@
 #include <QMouseEvent>
 
 WorkAreaView::WorkAreaView(QWidget *parent)
-    : QGraphicsView(parent), currentAction_(nullptr) {
+    : QGraphicsView(parent),
+      currentAction_(nullptr) {
+}
+
+void WorkAreaView::InsertElementButtonPressed(InsertElement element, bool checked) {
+
 }
 
 void WorkAreaView::mousePressEvent(QMouseEvent *event) {

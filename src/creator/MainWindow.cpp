@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <QGraphicsView>
 
-#include "WorkArea.hpp"
+#include "WorkAreaScene.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -42,14 +42,14 @@ MainWindow::MainWindow(QWidget *parent)
   // Initialize tool bar
   insertToolBar_ = new InsertElementToolBar(this);
   insertToolBar_->AddAction(QIcon(":/icons/entrypoint_black.svg"), tr("Entry Point"),
-                            InsertElementToolBar::Elements::kEntryPoint);
-  insertToolBar_->AddAction(QIcon(":/icons/state_black.svg"), tr("State"), InsertElementToolBar::Elements::kState);
+                            WorkAreaView::InsertElement::kEntryPoint);
+  insertToolBar_->AddAction(QIcon(":/icons/state_black.svg"), tr("State"), WorkAreaView::InsertElement::kState);
 
   addToolBar(Qt::LeftToolBarArea, insertToolBar_);
   addToolBar(Qt::TopToolBarArea, new QToolBar(this));
 
   graphicsView_ = new WorkAreaView(this);
-  scene_ = new WorkArea(this);
+  scene_ = new WorkAreaScene(this);
   scene_->addText("Hello, world!");
   graphicsView_->setScene(scene_);
   graphicsView_->viewport()->installEventFilter(this);
@@ -71,13 +71,13 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
 }
 
-void MainWindow::ActionPressed(InsertElementToolBar::Elements element, bool checked) {
+void MainWindow::ActionPressed(WorkAreaView::InsertElement element, bool checked) {
   if (checked) {
     qDebug() << "Checked";
   } else {
     qDebug() << "Unchecked";
   }
-  if (element == InsertElementToolBar::Elements::kEntryPoint) {
+  if (element == WorkAreaView::InsertElement::kEntryPoint) {
     qDebug() << "EntryPoint";
   }
 }

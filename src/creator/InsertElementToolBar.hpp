@@ -27,23 +27,20 @@
 #include <QActionGroup>
 #include <QToolBar>
 
+#include "WorkAreaView.hpp"
+
 class InsertElementToolBar : public QToolBar {
 Q_OBJECT
 
  public:
-  enum class Elements {
-    kEntryPoint,
-    kState
-  };
-
   explicit InsertElementToolBar(QWidget* parent);
-  void AddAction(const QIcon& icon, const QString& text, const Elements& element);
+  void AddAction(const QIcon& icon, const QString& text, const WorkAreaView::InsertElement& element);
 
  public slots:
   void UncheckCurrentAction();
 
- signals:
-  void Triggered(Elements element, bool checked);
+signals:
+  void Triggered(WorkAreaView::InsertElement element, bool checked);
 
  private slots:
   void ActionTriggered(QAction* action);
@@ -52,6 +49,5 @@ Q_OBJECT
   QAction* currentCheckedAction_;
   QActionGroup* actionGroup_;
 };
-Q_DECLARE_METATYPE(InsertElementToolBar::Elements)
 
 #endif  // CREATOR_INSERTELEMENTTOOLBAR_HPP_

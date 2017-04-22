@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_WORKAREA_HPP_
-#define CREATOR_WORKAREA_HPP_
+#ifndef CREATOR_WORKAREASCENE_HPP_
+#define CREATOR_WORKAREASCENE_HPP_
 
 #include <QAction>
 #include <QGraphicsScene>
@@ -29,21 +29,21 @@
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
-class WorkArea : public QGraphicsScene {
+class WorkAreaScene : public QGraphicsScene {
 Q_OBJECT
 
  public:
   // TODO: This class should not own this enumeration
   enum class Element {
-    kState,
-    kEntryPoint
+    kEntryPoint,
+    kState
   };
   enum class InsertPhase {
     kNotStarted,
     kNotInserted,
     kTemporaryInserted
   };
-  explicit WorkArea(QObject *parent = 0);
+  explicit WorkAreaScene(QObject *parent = 0);
   void StartInsertMode(Element element) {
     insertMode_ = {element, InsertPhase::kNotInserted};
   }
@@ -61,4 +61,4 @@ Q_OBJECT
   InsertMode insertMode_;
 };
 
-#endif  // CREATOR_WORKAREA_HPP_
+#endif  // CREATOR_WORKAREASCENE_HPP_

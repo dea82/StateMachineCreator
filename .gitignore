@@ -1,5 +1,8 @@
-#
+# Build directory
 build/
+
+# Emacs temporary files
+*~
 
 # Compiled Object files
 *.slo

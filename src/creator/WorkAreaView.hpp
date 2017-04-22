@@ -27,15 +27,22 @@
 #include <QGraphicsView>
 
 class WorkAreaView : public QGraphicsView {
-  Q_OBJECT
+Q_OBJECT
  public:
+  // TODO: This enumeration should probably not be owned by this class.
+  enum class InsertElement {
+    kEntryPoint,
+    kState
+  };
   explicit WorkAreaView(QWidget *parent = 0);
+ public slots:
+  void InsertElementButtonPressed(InsertElement element, bool checked);
  protected:
-  void mousePressEvent(QMouseEvent *event) override;
- signals:
+  void mousePressEvent(QMouseEvent *event) override;signals:
   void Clicked();
  private:
   QAction *currentAction_;
 };
+Q_DECLARE_METATYPE(WorkAreaView::InsertElement)
 
 #endif  // CREATOR_WORKAREAVIEW_HPP_
