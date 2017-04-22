@@ -1,0 +1,14 @@
+sudo: required
+dist: trusty
+
+services:
+  - docker
+
+before_install:
+# Setup docker container
+  - docker build -t build_image .
+  - docker run -itd -v $TRAVIS_BUILD_DIR:/repo --name build_container build_image
+
+script:  
+  - docker exec build_container cmake -H/repo/src -B/build
+  - docker exec build_container cmake --build /build
