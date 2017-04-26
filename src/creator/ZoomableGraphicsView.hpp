@@ -20,23 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "WorkAreaView.hpp"
+#ifndef CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
+#define CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
 
+#include <QGraphicsView>
+#include <QWheelEvent>
 #include <QDebug>
-#include <QMouseEvent>
 
-WorkAreaView::WorkAreaView(QWidget *parent)
-    : QGraphicsView(parent),
-      currentAction_(nullptr) {
-}
+class ZoomableGraphicsView : public QGraphicsView
+{
+ public:
+  ZoomableGraphicsView(QGraphicsScene* defaultScene, QWidget* parent) : QGraphicsView(defaultScene, parent) {};
 
-void WorkAreaView::InsertElementButtonPressed(InsertElement element, bool checked) {
+  void wheelEvent(QWheelEvent* event) {
+  }
+};
 
-}
-
-void WorkAreaView::mousePressEvent(QMouseEvent *event) {
-  qDebug() << "WorkAreaView clicked";
-  // Propagate event to active scene.
-  emit Clicked();
-  QGraphicsView::mousePressEvent(event);
-}
+#endif /* CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_ */

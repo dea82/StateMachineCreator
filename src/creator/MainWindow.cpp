@@ -23,11 +23,20 @@
 #include "MainWindow.hpp"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QGraphicsView>
+#include <QIcon>
+#include <QPainter>
+#include <QRect>
+#include <QSize>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QWidget>
 
+#include "InsertElementToolBar.hpp"
 #include "WorkAreaScene.hpp"
+#include "ZoomableGraphicsView.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -35,49 +44,65 @@ MainWindow::MainWindow(QWidget *parent)
 
   auto screenGeometry = QApplication::desktop()->screenGeometry();
   resize(screenGeometry.width() * 0.6, screenGeometry.height() * 0.6);
+
+  setContextMenuPolicy(Qt::NoContextMenu);
+
   // Initialize status bar
   statusBar_ = new QStatusBar(this);
+//  zmq::context_t context(1);
+//  zmq::socket_t socket(context, ZMQ_REQ);
+//  socket.connect("tcp://localhost:5555");
+//  zmq::message_t request(5);
+//  memcpy(request.data(), "Hello", 5);
+//  socket.send(request);
+//  //  Get the reply.
+//  zmq::message_t reply;
+//  socket.recv(&reply);
+
   setStatusBar(statusBar_);
 
-  // Initialize tool bar
-  insertToolBar_ = new InsertElementToolBar(this);
-  insertToolBar_->AddAction(QIcon(":/icons/entrypoint_black.svg"), tr("Entry Point"),
-                            WorkAreaView::InsertElement::kEntryPoint);
-  insertToolBar_->AddAction(QIcon(":/icons/state_black.svg"), tr("State"), WorkAreaView::InsertElement::kState);
+  CreateInsertToolBar();
 
-  addToolBar(Qt::LeftToolBarArea, insertToolBar_);
   addToolBar(Qt::TopToolBarArea, new QToolBar(this));
 
-  graphicsView_ = new WorkAreaView(this);
-  scene_ = new WorkAreaScene(this);
-  scene_->addText("Hello, world!");
-  graphicsView_->setScene(scene_);
+  activeScene_ = new WorkAreaScene(this);
+
+  graphicsView_ = new ZoomableGraphicsView(activeScene_, this);
   graphicsView_->viewport()->installEventFilter(this);
   setCentralWidget(graphicsView_);
   show();
 
-  graphicsView_->viewport()->setMouseTracking(false);
+  graphicsView_->viewport()->setMouseTracking(true);
   int h = graphicsView_->size().height();
   qDebug() << "GraphicsView height: " << h;
   int w = graphicsView_->size().width();
   qDebug() << "GraphicsView width: " << w;
-  graphicsView_->setSceneRect(QRect(-w / 2, -h / 2, w, h));
+  graphicsView_->setRenderHint(QPainter::Antialiasing);
+  graphicsView_->setSceneRect(QRect(0, 0, w, h));
 
   //
-  connect(insertToolBar_, &InsertElementToolBar::Triggered, this, &MainWindow::ActionPressed);
-  connect(graphicsView_, &WorkAreaView::Clicked, insertToolBar_, &InsertElementToolBar::UncheckCurrentAction);
+  connect(insertToolBar_, &InsertElementToolBar::Triggered, this, &MainWindow::InsertElementButtonPressed);
+  connect(activeScene_, &WorkAreaScene::InsertModeEnded, this, &MainWindow::InsertModeEnded);
 }
 
-MainWindow::~MainWindow() {
-}
-
-void MainWindow::ActionPressed(WorkAreaView::InsertElement element, bool checked) {
+void MainWindow::InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, const bool checked) {
   if (checked) {
-    qDebug() << "Checked";
+    activeScene_->StartInsertMode(element);
   } else {
-    qDebug() << "Unchecked";
+    activeScene_->AbortInsertMode();
   }
-  if (element == WorkAreaView::InsertElement::kEntryPoint) {
-    qDebug() << "EntryPoint";
-  }
+}
+
+void MainWindow::InsertModeEnded() {
+  insertToolBar_->UncheckCurrentAction();
+}
+
+void MainWindow::CreateInsertToolBar() {
+  // Initialize tool bar
+  insertToolBar_ = new InsertElementToolBar(this);
+  insertToolBar_->AddAction(QIcon(":/icons/entrypoint_black.svg"), tr("Entry Point"),
+                            OutlineGraphicsItem::ItemType::kEntryPoint);
+  insertToolBar_->AddAction(QIcon(":/icons/state_black.svg"), tr("State"), OutlineGraphicsItem::ItemType::kState);
+
+  addToolBar(Qt::LeftToolBarArea, insertToolBar_);
 }

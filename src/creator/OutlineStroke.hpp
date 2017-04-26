@@ -20,42 +20,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#ifndef CREATOR_OUTLINESTROKE_HPP_
+#define CREATOR_OUTLINESTROKE_HPP_
 
-#include <QMainWindow>
-#include <QString>
+#include <QGraphicsItem>
+#include <QPainterPath>
+#include <QPen>
 
-#include "OutlineGraphicsItem.hpp"
+namespace statemachinecreator {
+namespace gui {
 
-class InsertElementToolBar;
-class QGraphicsView;
-class QStatusBar;
-class QWidget;
-class WorkAreaScene;
-
-class MainWindow : public QMainWindow {
-Q_OBJECT
-
+class OutlineStroke : public QGraphicsItem {
  public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow() {
+  OutlineStroke(const QPen& pen, QGraphicsItem* parent)
+      : pen_(pen),
+        QGraphicsItem(parent) {
   }
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
 
- public slots:
-  void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, const bool checked);
-  void InsertModeEnded();
+  QRectF boundingRect() const override;
+
+  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override;
+
+  QPen getPen() const {
+    return pen_;
+  }
+
+  void SetPen(const QPen& pen) {
+    pen_ = pen;
+  }
+
+  QPen GetPen() const {
+    return pen_;
+  }
 
  private:
-  void CreateInsertToolBar();
-  InsertElementToolBar* insertToolBar_;
-  QStatusBar* statusBar_;
-  QGraphicsView* graphicsView_;
-  WorkAreaScene* activeScene_;
+  QPen pen_;
 };
 
-#endif  // CREATOR_MAINWINDOW_HPP_
+}  // namespace gui
+}  // namespace statemachinecreator
+#endif  // CREATOR_OUTLINESTROKE_HPP_

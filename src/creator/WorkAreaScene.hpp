@@ -23,42 +23,45 @@
 #ifndef CREATOR_WORKAREASCENE_HPP_
 #define CREATOR_WORKAREASCENE_HPP_
 
-#include <QAction>
 #include <QGraphicsScene>
-#include <QDebug>
-#include <QGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
+#include <QString>
+
+#include "OutlineGraphicsItem.hpp"
+
+class QGraphicsItem;
+class QGraphicsSceneMouseEvent;
+template <typename T> class QList;
 
 class WorkAreaScene : public QGraphicsScene {
 Q_OBJECT
 
  public:
-  // TODO: This class should not own this enumeration
-  enum class Element {
-    kEntryPoint,
-    kState
-  };
-  enum class InsertPhase {
-    kNotStarted,
-    kNotInserted,
-    kTemporaryInserted
-  };
   explicit WorkAreaScene(QObject *parent = 0);
-  void StartInsertMode(Element element) {
-    insertMode_ = {element, InsertPhase::kNotInserted};
-  }
+  void StartInsertMode(const OutlineGraphicsItem::ItemType& element);
+  void EndInsertMode();
   void AbortInsertMode();
+  void DeselectAllElements() const;
+
+ signals:
+  void InsertModeEnded();
 
  protected:
   void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
   void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 
  private:
+  QGraphicsItem* const FocusElement(const QList<QGraphicsItem *>& items) const;
   struct InsertMode {
-    Element element;
-    InsertPhase phase;
+    enum class State {
+      kNotActive,
+      kReadyToBeCreated,
+      kMoving
+    } state;
+    OutlineGraphicsItem::ItemType element;
   };
   InsertMode insertMode_;
+  QGraphicsItem* focusElement_;
+  QGraphicsItem* temporaryInsertItem_;
 };
 
 #endif  // CREATOR_WORKAREASCENE_HPP_

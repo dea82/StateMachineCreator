@@ -20,29 +20,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_WORKAREAVIEW_HPP_
-#define CREATOR_WORKAREAVIEW_HPP_
+#ifndef CREATOR_RESIZEHANDLE_HPP_
+#define CREATOR_RESIZEHANDLE_HPP_
 
-#include <QAction>
-#include <QGraphicsView>
+#include <QGraphicsItem>
 
-class WorkAreaView : public QGraphicsView {
-Q_OBJECT
+class OutlineGraphicsItem;
+class QGraphicsSceneHoverEvent;
+class QGraphicsSceneMouseEvent;
+class QPainter;
+class QRectF;
+class QStyleOptionGraphicsItem;
+class QWidget;
+
+class ResizeHandle : public QGraphicsItem {
  public:
-  // TODO: This enumeration should probably not be owned by this class.
-  enum class InsertElement {
-    kEntryPoint,
-    kState
+  enum class Position {
+    kTopLeft,
+    kTopRight,
+    kBottomLeft,
+    kBottomRight
   };
-  explicit WorkAreaView(QWidget *parent = 0);
- public slots:
-  void InsertElementButtonPressed(InsertElement element, bool checked);
- protected:
-  void mousePressEvent(QMouseEvent *event) override;signals:
-  void Clicked();
- private:
-  QAction *currentAction_;
-};
-Q_DECLARE_METATYPE(WorkAreaView::InsertElement)
 
-#endif  // CREATOR_WORKAREAVIEW_HPP_
+  ResizeHandle(OutlineGraphicsItem* const parent, const Position& position);
+
+  QRectF boundingRect() const override;
+
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+  void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+  void hoverEnterEvent(QGraphicsSceneHoverEvent *mouseEvent) override;
+  void hoverLeaveEvent(QGraphicsSceneHoverEvent *mouseEvent) override;
+  constexpr int getSize() const noexcept {
+    return kSize_;
+  }
+
+ private:
+  bool hovered_;
+  OutlineGraphicsItem * const parent_;
+  const Position position_;
+  static constexpr int kSize_ = 10;
+};
+
+#endif  // CREATOR_RESIZEHANDLE_HPP_

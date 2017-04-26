@@ -23,24 +23,28 @@
 #ifndef CREATOR_INSERTELEMENTTOOLBAR_HPP_
 #define CREATOR_INSERTELEMENTTOOLBAR_HPP_
 
-#include <QAction>
-#include <QActionGroup>
+#include <QIcon>
 #include <QToolBar>
 
-#include "WorkAreaView.hpp"
+#include "OutlineGraphicsItem.hpp"
+
+class QAction;
+class QActionGroup;
+class QIcon;
+class QObject;
+class QString;
+class QWidget;
 
 class InsertElementToolBar : public QToolBar {
 Q_OBJECT
 
  public:
   explicit InsertElementToolBar(QWidget* parent);
-  void AddAction(const QIcon& icon, const QString& text, const WorkAreaView::InsertElement& element);
-
- public slots:
+  void AddAction(const QIcon& icon, const QString& text, const OutlineGraphicsItem::ItemType& element);
   void UncheckCurrentAction();
 
-signals:
-  void Triggered(WorkAreaView::InsertElement element, bool checked);
+ signals:
+  void Triggered(const OutlineGraphicsItem::ItemType& element, const bool checked);
 
  private slots:
   void ActionTriggered(QAction* action);

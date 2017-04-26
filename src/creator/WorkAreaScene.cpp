@@ -22,62 +22,86 @@
 
 #include "WorkAreaScene.hpp"
 
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <memory>
+#include <QDebug>
+#include <QEvent>
+#include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 
+#include "EntryPoint.hpp"
+#include "OutlineGraphicsItem.hpp"
 #include "State.hpp"
 
 WorkAreaScene::WorkAreaScene(QObject *parent)
     : QGraphicsScene(parent),
-      insertMode_ { Element::kEntryPoint, InsertPhase::kNotInserted } {
+      insertMode_ { .state = InsertMode::State::kNotActive, .element = OutlineGraphicsItem::ItemType::kEntryPoint },
+      focusElement_ { nullptr },
+      temporaryInsertItem_ { nullptr } {
 }
 
-// TODO: Move to View?
+void WorkAreaScene::DeselectAllElements() const {
+  for (const auto& item : selectedItems()) {
+    item->setSelected(false);
+  }
+}
+
+void WorkAreaScene::StartInsertMode(const OutlineGraphicsItem::ItemType& element) {
+  if (insertMode_.state == InsertMode::State::kMoving) {
+    removeItem(items().first());
+  }
+  insertMode_.state = InsertMode::State::kReadyToBeCreated;
+  insertMode_.element = element;
+}
+
+void WorkAreaScene::EndInsertMode() {
+  insertMode_.state = InsertMode::State::kNotActive;
+}
+
 void WorkAreaScene::AbortInsertMode() {
-  if (insertMode_.phase == InsertPhase::kTemporaryInserted) {
+  if (insertMode_.state == InsertMode::State::kMoving) {
     // Cleanup temporary inserted object
     removeItem(items().first());
   }
-  insertMode_.phase = InsertPhase::kNotStarted;
+  insertMode_.state = InsertMode::State::kNotActive;
 }
 
 void WorkAreaScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-  if (insertMode_.phase != InsertPhase::kNotStarted) {
-    if (insertMode_.phase == InsertPhase::kNotInserted) {
-      if (insertMode_.element == Element::kEntryPoint) {
-        qDebug() << "Insert entry point";
-        // TODO: Replace with entry point
-        addItem(new State("foo", mouseEvent->scenePos().rx(), mouseEvent->scenePos().ry(), 20, 20));
-        insertMode_.phase = InsertPhase::kTemporaryInserted;
-      } else if (insertMode_.phase == InsertPhase::kNotInserted) {
-        qDebug() << "Insert new state";
-        addItem(new State("foo", mouseEvent->scenePos().rx(), mouseEvent->scenePos().ry(), 20, 20));
-        insertMode_.phase = InsertPhase::kTemporaryInserted;
-      }
+  if (insertMode_.state == InsertMode::State::kReadyToBeCreated) {
+    DeselectAllElements();
+    if (insertMode_.element == OutlineGraphicsItem::ItemType::kEntryPoint) {
+      temporaryInsertItem_ = new EntryPoint;
+    } else if (insertMode_.element == OutlineGraphicsItem::ItemType::kState) {
+      temporaryInsertItem_ = new State;
     }
-    items().first()->setPos(mouseEvent->scenePos());
-    qDebug() << "Moving entry point " << ": x: " << items().first()->pos().rx() << " y: "
-             << items().first()->pos().ry();
+    addItem(temporaryInsertItem_);
+    insertMode_.state = InsertMode::State::kMoving;
   }
-
-  for (auto &view : views()) {
-    if (view->viewport()->hasMouseTracking()) {
-      qDebug() << "With mouse tracking.";
-    } else {
-      qDebug() << "Without mouse tracking.";
-    }
+  if (insertMode_.state == InsertMode::State::kMoving) {
+    temporaryInsertItem_->setPos(mouseEvent->scenePos());
   }
   QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
 void WorkAreaScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-  qDebug() << "WorkArea clicked";
-  insertMode_.phase = InsertPhase::kNotStarted;
-  if (insertMode_.phase != InsertPhase::kNotStarted) {
-//    insertMode_.phase = InsertPhase::kNotStarted;
-//    currentAction_->setChecked(false);
-//    currentAction_ = nullptr;
+  // First check if insert mode shall be ended
+  if ((insertMode_.state != InsertMode::State::kNotActive) && (mouseEvent->button() == Qt::LeftButton)) {
+    EndInsertMode();
+    emit InsertModeEnded();
   }
   QGraphicsScene::mousePressEvent(mouseEvent);
+}
+
+QGraphicsItem* const WorkAreaScene::FocusElement(const QList<QGraphicsItem *>& items) const {
+  if (items.isEmpty()) {
+    return nullptr;
+  }
+  QGraphicsItem* focusElement = nullptr;
+  for (const auto& item : items) {
+    if (!focusElement) {
+      focusElement = item;
+    } else if ((focusElement->type() == OutlineGraphicsItem::ItemType::kState)
+        && (item->type() == OutlineGraphicsItem::ItemType::kEntryPoint)) {
+      return item;  // Quick return, highest prio found.
+    }
+  }
+  return focusElement;
 }
