@@ -7,7 +7,7 @@
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+//a furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
@@ -20,42 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#include "EntryPoint.hpp"
 
-#include <QMainWindow>
-#include <QString>
+#include <QMarginsF>
+#include <QPainter>
 
-#include "OutlineGraphicsItem.hpp"
+QRectF EntryPoint::boundingRect() const {
+  return shape().boundingRect();
+}
 
-class InsertElementToolBar;
-class QGraphicsView;
-class QStatusBar;
-class QWidget;
-class WorkAreaScene;
+QPainterPath EntryPoint::shape() const {
+  QPainterPath painterPath;
+  painterPath.addEllipse(entryPointBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2.0F - 0.5F));
+  return painterPath;
+}
 
-class MainWindow : public QMainWindow {
-Q_OBJECT
-
- public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow() {
-  }
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
-
- public slots:
-  void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, const bool checked);
-  void InsertModeEnded();
-
- private:
-  void CreateInsertToolBar();
-  InsertElementToolBar* insertToolBar_;
-  QStatusBar* statusBar_;
-  QGraphicsView* graphicsView_;
-  WorkAreaScene* activeScene_;
-};
-
-#endif  // CREATOR_MAINWINDOW_HPP_
+void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+  painter->setBrush(Qt::SolidPattern);
+  painter->drawEllipse(entryPointBorder_);
+}

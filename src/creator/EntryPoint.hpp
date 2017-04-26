@@ -20,42 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#ifndef CREATOR_ENTRYPOINT_HPP_
+#define CREATOR_ENTRYPOINT_HPP_
 
-#include <QMainWindow>
 #include <QString>
 
 #include "OutlineGraphicsItem.hpp"
 
-class InsertElementToolBar;
-class QGraphicsView;
-class QStatusBar;
+class QPainter;
+class QStyleOptionGraphicsItem;
 class QWidget;
-class WorkAreaScene;
+class QRectF;
 
-class MainWindow : public QMainWindow {
-Q_OBJECT
-
+class EntryPoint : public OutlineGraphicsItem {
  public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow() {
+  explicit EntryPoint(const qreal diameter = kDefaultDiameter_)
+      : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kEntryPoint, "Entry point"),
+        entryPointBorder_(QRect(-diameter / 2, -diameter / 2, diameter, diameter)),
+        outline_pen_() {
+    this->setZValue(1);
+    outline_pen_.setWidth(2);
   }
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
 
- public slots:
-  void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, const bool checked);
-  void InsertModeEnded();
+  QRectF boundingRect() const override;
+
+  QPainterPath shape() const override;
+
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
+
+  QString getName() const noexcept {
+    return name_;
+  }
 
  private:
-  void CreateInsertToolBar();
-  InsertElementToolBar* insertToolBar_;
-  QStatusBar* statusBar_;
-  QGraphicsView* graphicsView_;
-  WorkAreaScene* activeScene_;
+  QRect entryPointBorder_;
+  static constexpr qreal kDefaultDiameter_ = 22;
+  QPen outline_pen_;
 };
 
-#endif  // CREATOR_MAINWINDOW_HPP_
+#endif  // CREATOR_ENTRYPOINT_HPP_

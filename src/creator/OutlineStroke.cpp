@@ -20,42 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_MAINWINDOW_HPP_
-#define CREATOR_MAINWINDOW_HPP_
+#include "OutlineStroke.hpp"
 
-#include <QMainWindow>
-#include <QString>
+#include <QDebug>
+#include <QMarginsF>
+#include <QPainter>
+#include <QPainterPathStroker>
 
-#include "OutlineGraphicsItem.hpp"
+namespace statemachinecreator {
+namespace gui {
 
-class InsertElementToolBar;
-class QGraphicsView;
-class QStatusBar;
-class QWidget;
-class WorkAreaScene;
+QRectF OutlineStroke::boundingRect() const {
+  return parentItem()->boundingRect().marginsAdded(QMarginsF() += GetPen().widthF());
+}
 
-class MainWindow : public QMainWindow {
-Q_OBJECT
+void OutlineStroke::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+  auto original_shape = parentItem()->shape();
 
- public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow() {
-  }
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
+  QPainterPathStroker painterPathStroker;
+  painterPathStroker.setWidth(GetPen().widthF());
+  // Create a stroke which is both inside and outside of original shape
+  QPainterPath outlinePath = painterPathStroker.createStroke(original_shape);
 
- public slots:
-  void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, const bool checked);
-  void InsertModeEnded();
+  painter->setPen(GetPen());
+  // Merge outline path with original shape and draw this path
+  painter->drawPath(outlinePath.united(original_shape));
+}
 
- private:
-  void CreateInsertToolBar();
-  InsertElementToolBar* insertToolBar_;
-  QStatusBar* statusBar_;
-  QGraphicsView* graphicsView_;
-  WorkAreaScene* activeScene_;
-};
+}  // namespace gui
+}  // namespace statemachinecreator
 
-#endif  // CREATOR_MAINWINDOW_HPP_

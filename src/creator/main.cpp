@@ -22,7 +22,6 @@
 
 
 #include <QApplication>
-#include <QtGui>
 
 #include "MainWindow.hpp"
 

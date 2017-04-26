@@ -23,25 +23,82 @@
 #include "State.hpp"
 
 #include <QDebug>
+#include <QFont>
+#include <QGraphicsItem>
+#include <QMargins>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPen>
+#include <QSizeF>
+#include <QTextDocument>
+#include <forward_list>
 
-State::State(const QString& name, const qreal x, const qreal y, const qreal w, const qreal h)
-    : name_(name),
-      x_(x),
-      y_(y),
-      w_(w),
-      h_(h) {
+#include "ResizeHandle.hpp"
+
+class QString;
+class QStyleOptionGraphicsItem;
+class QWidget;
+
+State::State(const int w, const int h)
+    : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kState, "State"),
+      stateName_(name_),
+      stateBorder_(QRect(-w / 2, -h / 2, w, h)),
+      resizeHandles_(),
+      stateNameText_(new StateNameTextItem(name_, this)),
+      outline_pen_() {
+  outline_pen_.setWidth(kStateBorderWidth_);
 }
 
 QRectF State::boundingRect() const {
-  return QRectF(x_, y_, w_, h_);
+  return shape().boundingRect();
 }
 
 void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-  painter->drawRect(x_, y_, kDefaultWidth_, kDefaultHeight_);
-  qDebug() << "Draw rect: " << x_ << " " << y_ << " " << w_ << " " << h_;
+  painter->setPen(outline_pen_);
+  QPainterPath painterPath;
+  painterPath.addRoundedRect(stateBorder_, kRadius_, kRadius_);
+  painter->drawPath(painterPath);
+  painter->drawLine(-stateBorder_.width() / 2, -stateBorder_.height() / 2 + stateNameText_->document()->size().height(),
+                    stateBorder_.width() / 2, -stateBorder_.height() / 2 + stateNameText_->document()->size().height());
 }
 
-// void State::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-//  qDebug() << "Clicked state: " << name_;
-//  QGraphicsItem::mousePressEvent(event);
-// }
+QPainterPath State::shape() const {
+  QPainterPath painterPath;
+  painterPath.addRoundedRect(stateBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2),
+                             kRadius_ + outline_pen_.widthF() / 2, kRadius_ + outline_pen_.widthF() / 2);
+  return painterPath;
+}
+
+QVariant State::itemChange(GraphicsItemChange change, const QVariant &value) {
+  qDebug() << "Itemchange: " << change << " value: " << value;
+  if (change == QGraphicsItem::ItemSelectedHasChanged && value.canConvert<bool>() && value.toBool()) {
+    if (value.toBool()) {
+      resizeHandles_.emplace_front(
+          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kTopLeft)));
+      resizeHandles_.emplace_front(
+          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kTopRight)));
+      resizeHandles_.emplace_front(
+          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kBottomLeft)));
+      resizeHandles_.emplace_front(
+          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kBottomRight)));
+    } else {
+      resizeHandles_.clear();
+    }
+  }
+  return OutlineGraphicsItem::itemChange(change, value);
+}
+
+void State::updateStateNamePos() const {
+  qDebug() << "Update position of State Name position.";
+}
+
+StateNameTextItem::StateNameTextItem(const QString & text, State * parent)
+    : parent_(parent),
+      QGraphicsTextItem(text, static_cast<QGraphicsItem*>(parent)) {
+  setTextInteractionFlags(Qt::TextEditorInteraction);
+  QFont fixedSizeFont { font() };
+  fixedSizeFont.setPointSize(kStateNameTextSize_);
+  setFont(fixedSizeFont);
+  connect(document(), &QTextDocument::contentsChanged, this, &StateNameTextItem::updateGeometry);
+  updateGeometry();
+}

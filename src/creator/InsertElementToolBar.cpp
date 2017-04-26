@@ -22,15 +22,25 @@
 
 #include "InsertElementToolBar.hpp"
 
+#include <QAction>
+#include <QActionGroup>
+#include <QVariant>
+
+class QIcon;
+class QString;
+class QWidget;
+
 InsertElementToolBar::InsertElementToolBar(QWidget* parent)
     : actionGroup_(new QActionGroup(this)),
       currentCheckedAction_(nullptr),
       QToolBar(parent) {
   setMovable(false);
+  setFloatable(false);
   connect(actionGroup_, &QActionGroup::triggered, this, &InsertElementToolBar::ActionTriggered);
 }
 
-void InsertElementToolBar::AddAction(const QIcon& icon, const QString& text, const WorkAreaView::InsertElement& element) {
+void InsertElementToolBar::AddAction(const QIcon& icon, const QString& text,
+                                     const OutlineGraphicsItem::ItemType& element) {
   auto action = new QAction(icon, text, actionGroup_);
   action->setCheckable(true);
   action->setData(QVariant::fromValue(element));
@@ -50,9 +60,9 @@ void InsertElementToolBar::ActionTriggered(QAction* action) {
   } else {
     currentCheckedAction_ = action;
   }
-  QVariant data = action->data();
-  if (data.canConvert<WorkAreaView::InsertElement>()) {
-    emit Triggered(action->data().value<WorkAreaView::InsertElement>(), action->isChecked());
+  const auto& data = action->data();
+  if (data.canConvert<OutlineGraphicsItem::ItemType>()) {
+    emit Triggered(action->data().value<OutlineGraphicsItem::ItemType>(), action->isChecked());
   } else {
     // TODO: Error output - not possible to convert QVariant to expected data.
   }

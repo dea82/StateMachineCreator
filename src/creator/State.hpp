@@ -23,30 +23,68 @@
 #ifndef CREATOR_STATE_HPP_
 #define CREATOR_STATE_HPP_
 
-#include <QGraphicsItem>
-#include <QPainter>
+#include <QGraphicsTextItem>
+#include <QRect>
+#include <QString>
+#include <forward_list>
+#include <memory>
 
-class State : public QGraphicsItem {
+#include "OutlineGraphicsItem.hpp"
+
+class QPainter;
+class QRectF;
+class QStyleOptionGraphicsItem;
+class QVariant;
+class QWidget;
+class ResizeHandle;
+class StateNameTextItem;
+
+class State : public OutlineGraphicsItem {
  public:
-  State(const QString& name_, const qreal x, const qreal y, const qreal w = kDefaultWidth_, const qreal h =
-            kDefaultHeight_);
+  explicit State(const int w = kDefaultWidth_, const int h = kDefaultHeight_);
+
   QRectF boundingRect() const override;
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
+
+  QPainterPath shape() const override;
+
+  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override;
+
   QString getName() const {
     return name_;
   }
 
+  QRect getStateBorder() {
+    return stateBorder_;
+  }
+  void updateStateNamePos() const;
+
  protected:
-//  void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
  private:
-  QString name_;
-  qreal x_;
-  qreal y_;
-  qreal w_;
-  qreal h_;
-  static constexpr qreal kDefaultWidth_ = 20;
-  static constexpr qreal kDefaultHeight_ = 20;
+  QPen outline_pen_;
+  QString stateName_;
+  static constexpr int kDefaultWidth_ { 100 };
+  static constexpr int kDefaultHeight_ { 60 };
+  static constexpr int kRadius_ { 10 };
+  static constexpr int kTextPadding_ { 1 };
+  static constexpr int kStateBorderWidth_ { 2 };
+  QRect stateBorder_;
+  std::forward_list<std::unique_ptr<ResizeHandle> > resizeHandles_;
+  StateNameTextItem * stateNameText_;
 };
 
+
+class StateNameTextItem : public QGraphicsTextItem {
+  Q_OBJECT
+ public:
+  StateNameTextItem(const QString &text, State *parent);
+ public slots:
+  void updateGeometry() {
+    parent_->updateStateNamePos();
+  }
+ private:
+  State * parent_;
+  static constexpr int kStateNameTextSize_ { 16 };
+};
 #endif  // CREATOR_STATE_HPP_
