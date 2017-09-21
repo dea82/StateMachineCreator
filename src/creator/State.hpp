@@ -59,7 +59,6 @@ class State : public OutlineGraphicsItem {
   void updateStateNamePos() const;
 
  protected:
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
  private:
   QPen outline_pen_;
@@ -70,7 +69,6 @@ class State : public OutlineGraphicsItem {
   static constexpr int kTextPadding_ { 1 };
   static constexpr int kStateBorderWidth_ { 2 };
   QRect stateBorder_;
-  std::forward_list<std::unique_ptr<ResizeHandle> > resizeHandles_;
   StateNameTextItem * stateNameText_;
 };
 

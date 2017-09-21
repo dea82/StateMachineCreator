@@ -33,8 +33,6 @@
 #include <QTextDocument>
 #include <forward_list>
 
-#include "ResizeHandle.hpp"
-
 class QString;
 class QStyleOptionGraphicsItem;
 class QWidget;
@@ -43,7 +41,6 @@ State::State(const int w, const int h)
     : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kState, "State"),
       stateName_(name_),
       stateBorder_(QRect(-w / 2, -h / 2, w, h)),
-      resizeHandles_(),
       stateNameText_(new StateNameTextItem(name_, this)),
       outline_pen_() {
   outline_pen_.setWidth(kStateBorderWidth_);
@@ -67,25 +64,6 @@ QPainterPath State::shape() const {
   painterPath.addRoundedRect(stateBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2),
                              kRadius_ + outline_pen_.widthF() / 2, kRadius_ + outline_pen_.widthF() / 2);
   return painterPath;
-}
-
-QVariant State::itemChange(GraphicsItemChange change, const QVariant &value) {
-  qDebug() << "Itemchange: " << change << " value: " << value;
-  if (change == QGraphicsItem::ItemSelectedHasChanged && value.canConvert<bool>() && value.toBool()) {
-    if (value.toBool()) {
-      resizeHandles_.emplace_front(
-          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kTopLeft)));
-      resizeHandles_.emplace_front(
-          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kTopRight)));
-      resizeHandles_.emplace_front(
-          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kBottomLeft)));
-      resizeHandles_.emplace_front(
-          std::unique_ptr<ResizeHandle>(new ResizeHandle(this, ResizeHandle::Position::kBottomRight)));
-    } else {
-      resizeHandles_.clear();
-    }
-  }
-  return OutlineGraphicsItem::itemChange(change, value);
 }
 
 void State::updateStateNamePos() const {
