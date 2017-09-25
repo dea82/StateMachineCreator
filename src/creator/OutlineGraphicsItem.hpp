@@ -28,15 +28,9 @@
 #include <QString>
 #include <map>
 
-#include "OutlineStroke.hpp"
-
-class QGraphicsSceneHoverEvent;
-class QGraphicsSceneMouseEvent;
 class QPainter;
-class QPainterPath;
-class QPen;
-class QVariant;
 
+// TODO: Find a better name, this class has no coupling to outline anymore.
 class OutlineGraphicsItem : public QGraphicsItem {
  public:
   enum ItemType {
@@ -48,23 +42,14 @@ class OutlineGraphicsItem : public QGraphicsItem {
 
   explicit OutlineGraphicsItem(const ItemType& type, const QString& name);
   virtual ~OutlineGraphicsItem() = default;
+  QPen GetHoverPen();
 
  protected:
   void PaintBoundingRect(QPainter *painter) const;
-  QPen GetHoverPen();
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-  void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
-  void hoverEnterEvent(QGraphicsSceneHoverEvent *mouseEvent) override;
-  void hoverLeaveEvent(QGraphicsSceneHoverEvent *mouseEvent) override;
 
   QString name_;
-//  bool hovered_;
   static constexpr int kHoverPenWidth_ { 2 };
   static std::map<OutlineGraphicsItem::ItemType, int> nameCounter;
-  statemachinecreator::gui::OutlineStroke* hoverGraphicsItem_;
-
- private:
-  ItemType type_;
 };
 Q_DECLARE_METATYPE(OutlineGraphicsItem::ItemType)
 #endif  // CREATOR_OUTLINEGRAPHICSITEM_HPP_

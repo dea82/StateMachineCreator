@@ -58,10 +58,7 @@ class State : public OutlineGraphicsItem {
   }
   void updateStateNamePos() const;
 
- protected:
-
  private:
-  QPen outline_pen_;
   QString stateName_;
   static constexpr int kDefaultWidth_ { 100 };
   static constexpr int kDefaultHeight_ { 60 };
@@ -70,6 +67,7 @@ class State : public OutlineGraphicsItem {
   static constexpr int kStateBorderWidth_ { 2 };
   QRect stateBorder_;
   StateNameTextItem * stateNameText_;
+  QPen outline_pen_;
 };
 
 

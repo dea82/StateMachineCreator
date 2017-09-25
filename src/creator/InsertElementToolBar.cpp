@@ -31,9 +31,9 @@ class QString;
 class QWidget;
 
 InsertElementToolBar::InsertElementToolBar(QWidget* parent)
-    : actionGroup_(new QActionGroup(this)),
-      currentCheckedAction_(nullptr),
-      QToolBar(parent) {
+    : QToolBar(parent),
+      actionGroup_(new QActionGroup(this)),
+      currentCheckedAction_(nullptr) {
   setMovable(false);
   setFloatable(false);
   connect(actionGroup_, &QActionGroup::triggered, this, &InsertElementToolBar::ActionTriggered);

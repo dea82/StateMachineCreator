@@ -7,7 +7,7 @@
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
-//a furnished to do so, subject to the following conditions:
+// a furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
@@ -35,7 +35,7 @@ QPainterPath EntryPoint::shape() const {
   return painterPath;
 }
 
-void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
   painter->setBrush(Qt::SolidPattern);
   painter->drawEllipse(entryPointBorder_);
 }

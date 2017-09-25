@@ -50,8 +50,8 @@ Q_OBJECT
   void ActionTriggered(QAction* action);
 
  private:
-  QAction* currentCheckedAction_;
   QActionGroup* actionGroup_;
+  QAction* currentCheckedAction_;
 };
 
 #endif  // CREATOR_INSERTELEMENTTOOLBAR_HPP_

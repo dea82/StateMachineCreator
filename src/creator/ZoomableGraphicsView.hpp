@@ -32,7 +32,7 @@ class ZoomableGraphicsView : public QGraphicsView
  public:
   ZoomableGraphicsView(QGraphicsScene* defaultScene, QWidget* parent) : QGraphicsView(defaultScene, parent) {};
 
-  void wheelEvent(QWheelEvent* event) {
+  void wheelEvent(QWheelEvent* /*event*/) {
   }
 };
 

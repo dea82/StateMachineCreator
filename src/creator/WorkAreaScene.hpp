@@ -50,7 +50,7 @@ Q_OBJECT
   void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 
  private:
-  QGraphicsItem* const FocusElement(const QList<QGraphicsItem *>& items) const;
+  QGraphicsItem* FocusElement(const QList<QGraphicsItem *>& items) const;
   struct InsertMode {
     enum class State {
       kNotActive,
@@ -61,7 +61,8 @@ Q_OBJECT
   };
   InsertMode insertMode_;
   QGraphicsItem* focusElement_;
-  QGraphicsItem* temporaryInsertItem_;
+  // TODO: Change to QGraphicsItem when a painter toolbox is in place
+  OutlineGraphicsItem* temporaryInsertItem_;
 };
 
 #endif  // CREATOR_WORKAREASCENE_HPP_

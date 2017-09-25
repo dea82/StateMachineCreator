@@ -30,6 +30,7 @@
 #include "EntryPoint.hpp"
 #include "OutlineGraphicsItem.hpp"
 #include "State.hpp"
+#include "OutlineStroke.hpp"
 
 WorkAreaScene::WorkAreaScene(QObject *parent)
     : QGraphicsScene(parent),
@@ -74,6 +75,7 @@ void WorkAreaScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     }
     addItem(temporaryInsertItem_);
     insertMode_.state = InsertMode::State::kMoving;
+    new statemachinecreator::gui::OutlineStroke(temporaryInsertItem_->GetHoverPen(), temporaryInsertItem_);
   }
   if (insertMode_.state == InsertMode::State::kMoving) {
     temporaryInsertItem_->setPos(mouseEvent->scenePos());
@@ -90,7 +92,7 @@ void WorkAreaScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
   QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
-QGraphicsItem* const WorkAreaScene::FocusElement(const QList<QGraphicsItem *>& items) const {
+QGraphicsItem* WorkAreaScene::FocusElement(const QList<QGraphicsItem *>& items) const {
   if (items.isEmpty()) {
     return nullptr;
   }

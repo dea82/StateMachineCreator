@@ -27,17 +27,11 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
-class QGraphicsSceneHoverEvent;
-class QGraphicsSceneMouseEvent;
-class QVariant;
-
 std::map<OutlineGraphicsItem::ItemType, int> OutlineGraphicsItem::nameCounter;
 
-OutlineGraphicsItem::OutlineGraphicsItem(const ItemType& type, const QString& name)
-    : type_ { type },
-      hoverGraphicsItem_ { new statemachinecreator::gui::OutlineStroke(GetHoverPen(), this) } {
+OutlineGraphicsItem::OutlineGraphicsItem(const ItemType& type, const QString& name) {
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-  setAcceptHoverEvents(true);
+
   if (OutlineGraphicsItem::nameCounter.count(type) > 0) {
     nameCounter[type]++;
   } else {
@@ -46,28 +40,10 @@ OutlineGraphicsItem::OutlineGraphicsItem(const ItemType& type, const QString& na
   name_ = name + " " + QString::number(nameCounter[type]);
 }
 
-void OutlineGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-  QGraphicsItem::mousePressEvent(mouseEvent);
-}
-
-void OutlineGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent*mouseEvent) {
-  qDebug() << "Enter " << name_;
-  hoverGraphicsItem_->show();
-}
-
-void OutlineGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent*mouseEvent) {
-  qDebug() << "Leave " << name_;
-  hoverGraphicsItem_->hide();
-}
-
 QPen OutlineGraphicsItem::GetHoverPen() {
   QPen pen(QColor::fromRgb(0x66, 0xB2, 0xFF));
   pen.setWidth(kHoverPenWidth_);
   return pen;
-}
-
-QVariant OutlineGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value) {
-  return QGraphicsItem::itemChange(change, value);
 }
 
 void OutlineGraphicsItem::PaintBoundingRect(QPainter *painter) const {

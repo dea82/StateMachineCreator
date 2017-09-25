@@ -32,18 +32,11 @@ namespace gui {
 
 class OutlineStroke : public QGraphicsItem {
  public:
-  OutlineStroke(const QPen& pen, QGraphicsItem* parent)
-      : pen_(pen),
-        QGraphicsItem(parent) {
-  }
+  OutlineStroke(const QPen& pen, QGraphicsItem* parent);
 
   QRectF boundingRect() const override;
 
   void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override;
-
-  QPen getPen() const {
-    return pen_;
-  }
 
   void SetPen(const QPen& pen) {
     pen_ = pen;
@@ -52,6 +45,9 @@ class OutlineStroke : public QGraphicsItem {
   QPen GetPen() const {
     return pen_;
   }
+
+ protected:
+  bool sceneEventFilter(QGraphicsItem *watched, QEvent *event) override;
 
  private:
   QPen pen_;

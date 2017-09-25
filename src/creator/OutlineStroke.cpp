@@ -23,6 +23,7 @@
 #include "OutlineStroke.hpp"
 
 #include <QDebug>
+#include <QEvent>
 #include <QMarginsF>
 #include <QPainter>
 #include <QPainterPathStroker>
@@ -30,11 +31,18 @@
 namespace statemachinecreator {
 namespace gui {
 
+OutlineStroke::OutlineStroke(const QPen& pen, QGraphicsItem* parent)
+    : QGraphicsItem(parent),
+      pen_(pen) {
+  parent->setAcceptHoverEvents(true);
+  parent->installSceneEventFilter(this);
+}
+
 QRectF OutlineStroke::boundingRect() const {
   return parentItem()->boundingRect().marginsAdded(QMarginsF() += GetPen().widthF());
 }
 
-void OutlineStroke::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+void OutlineStroke::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
   auto original_shape = parentItem()->shape();
 
   QPainterPathStroker painterPathStroker;
@@ -45,6 +53,17 @@ void OutlineStroke::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   painter->setPen(GetPen());
   // Merge outline path with original shape and draw this path
   painter->drawPath(outlinePath.united(original_shape));
+}
+
+bool OutlineStroke::sceneEventFilter(QGraphicsItem* /*watched*/, QEvent* event) {
+  if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+    show();
+  } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
+    hide();
+  }
+  // Class is decoupled from watched object and event shall be propagated to watched object to be able to take further
+  // actions in watched object.
+  return false;
 }
 
 }  // namespace gui

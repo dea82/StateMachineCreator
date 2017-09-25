@@ -50,7 +50,7 @@ QRectF State::boundingRect() const {
   return shape().boundingRect();
 }
 
-void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void State::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
   painter->setPen(outline_pen_);
   QPainterPath painterPath;
   painterPath.addRoundedRect(stateBorder_, kRadius_, kRadius_);
@@ -71,8 +71,8 @@ void State::updateStateNamePos() const {
 }
 
 StateNameTextItem::StateNameTextItem(const QString & text, State * parent)
-    : parent_(parent),
-      QGraphicsTextItem(text, static_cast<QGraphicsItem*>(parent)) {
+    : QGraphicsTextItem(text, static_cast<QGraphicsItem*>(parent)),
+      parent_(parent) {
   setTextInteractionFlags(Qt::TextEditorInteraction);
   QFont fixedSizeFont { font() };
   fixedSizeFont.setPointSize(kStateNameTextSize_);
