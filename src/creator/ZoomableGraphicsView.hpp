@@ -23,17 +23,25 @@
 #ifndef CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
 #define CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
 
-#include <QGraphicsView>
-#include <QWheelEvent>
 #include <QDebug>
+#include <QGraphicsView>
 
-class ZoomableGraphicsView : public QGraphicsView
-{
+class QGestureEvent;
+class QPinchGesture;
+class QWheelEvent;
+
+class ZoomableGraphicsView : public QGraphicsView {
  public:
-  ZoomableGraphicsView(QGraphicsScene* defaultScene, QWidget* parent) : QGraphicsView(defaultScene, parent) {};
+  ZoomableGraphicsView(QGraphicsScene* defaultScene, QWidget* parent);
 
-  void wheelEvent(QWheelEvent* /*event*/) {
-  }
+ protected:
+  void wheelEvent(QWheelEvent* event) override;
+  bool event(QEvent *event) override;
+
+ private:
+  bool gestureEvent(QGestureEvent* event);
+  void pinchTriggered(QPinchGesture* pinch);
+  static constexpr qreal kZoomFactor_ { 1.10 };
 };
 
-#endif /* CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_ */
+#endif  // CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
