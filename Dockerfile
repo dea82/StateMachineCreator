@@ -1,4 +1,4 @@
-FROM dea82/gcc-qt-docker:1.1.1
+FROM dea82/gcc-qt-docker:2.0.0
 
 RUN apk add --no-cache libtool git autoconf openssl ccache \
 #
