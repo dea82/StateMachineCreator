@@ -53,7 +53,7 @@ class State : public OutlineGraphicsItem {
     return name_;
   }
 
-  QRect getStateBorder() {
+  QRectF getStateBorder() {
     return stateBorder_;
   }
   void updateStateNamePos() const;
@@ -65,7 +65,7 @@ class State : public OutlineGraphicsItem {
   static constexpr int kRadius_ { 10 };
   static constexpr int kTextPadding_ { 1 };
   static constexpr int kStateBorderWidth_ { 2 };
-  QRect stateBorder_;
+  QRectF stateBorder_;
   StateNameTextItem * stateNameText_;
   QPen outline_pen_;
 };
