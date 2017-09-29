@@ -47,7 +47,7 @@ void WorkAreaScene::DeselectAllElements() const {
 
 void WorkAreaScene::StartInsertMode(const OutlineGraphicsItem::ItemType& element) {
   if (insertMode_.state == InsertMode::State::kMoving) {
-    removeItem(items().first());
+    removeItem(temporaryInsertItem_);
   }
   insertMode_.state = InsertMode::State::kReadyToBeCreated;
   insertMode_.element = element;
@@ -59,8 +59,7 @@ void WorkAreaScene::EndInsertMode() {
 
 void WorkAreaScene::AbortInsertMode() {
   if (insertMode_.state == InsertMode::State::kMoving) {
-    // Cleanup temporary inserted object
-    removeItem(items().first());
+    removeItem(temporaryInsertItem_);
   }
   insertMode_.state = InsertMode::State::kNotActive;
 }
