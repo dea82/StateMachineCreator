@@ -23,11 +23,14 @@
 #include "GraphicsViewZoom.hpp"
 
 #include <QApplication>
-#include <QMouseEvent>
-#include <QGestureEvent>
-#include <QPinchGesture>
-#include <QScrollBar>
 #include <qmath.h>
+#include <QEvent>
+#include <QGestureEvent>
+#include <QGraphicsView>
+#include <QMouseEvent>
+#include <QPinchGesture>
+#include <QPointF>
+#include <QWheelEvent>
 
 namespace statemachinecreator {
 namespace gui {
@@ -36,9 +39,10 @@ GraphicsViewZoom::GraphicsViewZoom(QGraphicsView* view)
     : QObject(view),
       view_(view),
       modifier_key_(Qt::NoModifier) {
-  view_->viewport()->installEventFilter(this);
-  view_->setMouseTracking(true);
-  view_->grabGesture(Qt::PinchGesture);
+  // Viewport is the painting area in the middle (scrollbars not included) of QGraphicsView
+  view->viewport()->installEventFilter(this);
+  view->viewport()->setMouseTracking(true);
+  view->viewport()->grabGesture(Qt::PinchGesture);
 }
 
 void GraphicsViewZoom::SetModifierKey(const Qt::KeyboardModifiers modifiers) {
@@ -48,11 +52,8 @@ void GraphicsViewZoom::SetModifierKey(const Qt::KeyboardModifiers modifiers) {
 bool GraphicsViewZoom::eventFilter(QObject* /*object*/, QEvent* event) {
   if (event->type() == QEvent::MouseMove) {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-    QPointF delta = target_viewport_pos_ - mouse_event->pos();
-    if (qAbs(delta.x()) > 5 || qAbs(delta.y()) > 5) {
-      target_viewport_pos_ = mouse_event->pos();
-      target_scene_pos_ = view_->mapToScene(mouse_event->pos());
-    }
+    target_viewport_pos_ = mouse_event->pos();
+    target_scene_pos_ = view_->mapToScene(mouse_event->pos());
   } else if (event->type() == QEvent::Wheel) {
     return WheelEvent(static_cast<QWheelEvent*>(event));
   } else if (event->type() == QEvent::Gesture) {
@@ -82,7 +83,9 @@ bool GraphicsViewZoom::GestureEvent(QGestureEvent* event) {
 }
 
 void GraphicsViewZoom::PinchTriggered(QPinchGesture* pinch) {
-  Zoom(pinch->scaleFactor());
+  if (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged) {
+    Zoom(pinch->scaleFactor());
+  }
 }
 
 void GraphicsViewZoom::Zoom(const qreal factor) {

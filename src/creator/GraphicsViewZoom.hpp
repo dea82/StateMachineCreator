@@ -23,10 +23,14 @@
 #ifndef CREATOR_GRAPHICSVIEWZOOM_HPP_
 #define CREATOR_GRAPHICSVIEWZOOM_HPP_
 
-#include <QGraphicsView>
 #include <QObject>
+#include <QPointF>
+#include <Qt>
+#include <QtGlobal>
 
+class QEvent;
 class QGestureEvent;
+class QGraphicsView;
 class QPinchGesture;
 class QWheelEvent;
 
