@@ -20,28 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
-#define CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
+#ifndef CREATOR_GRAPHICSVIEWZOOM_HPP_
+#define CREATOR_GRAPHICSVIEWZOOM_HPP_
 
-#include <QDebug>
 #include <QGraphicsView>
+#include <QObject>
 
 class QGestureEvent;
 class QPinchGesture;
 class QWheelEvent;
 
-class ZoomableGraphicsView : public QGraphicsView {
+namespace statemachinecreator {
+namespace gui {
+
+class GraphicsViewZoom : public QObject {
+Q_OBJECT
  public:
-  ZoomableGraphicsView(QGraphicsScene* defaultScene, QWidget* parent);
+  explicit GraphicsViewZoom(QGraphicsView* view);
+  void SetModifierKey(const Qt::KeyboardModifiers modifiers);
 
  protected:
-  void wheelEvent(QWheelEvent* event) override;
-  bool event(QEvent *event) override;
+  bool eventFilter(QObject* object, QEvent* event) override;
 
  private:
-  bool gestureEvent(QGestureEvent* event);
-  void pinchTriggered(QPinchGesture* pinch);
-  static constexpr qreal kZoomFactor_ { 1.10 };
-};
+  bool WheelEvent(QWheelEvent* event);
+  bool GestureEvent(QGestureEvent* event);
+  void PinchTriggered(QPinchGesture* pinch);
+  void Zoom(const qreal factor);
 
-#endif  // CREATOR_ZOOMABLEGRAPHICSVIEW_HPP_
+  QGraphicsView* const view_;
+  Qt::KeyboardModifiers modifier_key_;
+  QPointF target_scene_pos_;
+  QPointF target_viewport_pos_;
+
+  static constexpr qreal kZoomFactorBase_ { 1.0015 };
+};
+}  // namespace gui
+}  // namespace statemachinecreator
+
+#endif  //  CREATOR_GRAPHICSVIEWZOOM_HPP_

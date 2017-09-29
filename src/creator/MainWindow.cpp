@@ -36,7 +36,7 @@
 
 #include "InsertElementToolBar.hpp"
 #include "WorkAreaScene.hpp"
-#include "ZoomableGraphicsView.hpp"
+#include "GraphicsViewZoom.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   activeScene_ = new WorkAreaScene(this);
 
-  graphicsView_ = new ZoomableGraphicsView(activeScene_, this);
-  graphicsView_->viewport()->installEventFilter(this);
+  graphicsView_ = new QGraphicsView(activeScene_, this);
+  new statemachinecreator::gui::GraphicsViewZoom(graphicsView_);
   setCentralWidget(graphicsView_);
   show();
 
