@@ -12,5 +12,5 @@ iwyu_check(OFF)
 
 project(StateMachineCreator CXX)
 
-add_subdirectory(creator)
+add_subdirectory(gui)
 add_subdirectory(server)
