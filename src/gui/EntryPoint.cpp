@@ -31,11 +31,12 @@ QRectF EntryPoint::boundingRect() const {
 
 QPainterPath EntryPoint::shape() const {
   QPainterPath painterPath;
-  painterPath.addEllipse(entryPointBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2.0F - 0.5F));
+  painterPath.addEllipse(entryPointBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2.0F));
   return painterPath;
 }
 
 void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
+  painter->setPen(outline_pen_);
   painter->setBrush(Qt::SolidPattern);
   painter->drawEllipse(entryPointBorder_);
 }
