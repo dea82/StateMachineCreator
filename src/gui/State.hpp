@@ -31,6 +31,7 @@
 
 #include "OutlineGraphicsItem.hpp"
 
+class QGraphicsSceneMouseEvent;
 class QPainter;
 class QRectF;
 class QStyleOptionGraphicsItem;
@@ -79,8 +80,10 @@ class StateNameTextItem : public QGraphicsTextItem {
   void updateGeometry() {
     parent_->updateStateNamePos();
   }
+ protected:
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
  private:
   State * parent_;
-  static constexpr int kStateNameTextSize_ { 16 };
+  static constexpr int kStateNameTextSize_ { 14 };
 };
 #endif  // CREATOR_STATE_HPP_

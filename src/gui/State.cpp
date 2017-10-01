@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QFont>
 #include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 #include <QMargins>
 #include <QPainter>
 #include <QPainterPath>
@@ -44,6 +45,7 @@ State::State(const int w, const int h)
       stateNameText_(new StateNameTextItem(name_, this)),
       outline_pen_() {
   outline_pen_.setWidth(kStateBorderWidth_);
+  updateStateNamePos();
 }
 
 QRectF State::boundingRect() const {
@@ -67,16 +69,23 @@ QPainterPath State::shape() const {
 }
 
 void State::updateStateNamePos() const {
-  qDebug() << "Update position of State Name position.";
+  stateNameText_->setPos(-stateNameText_->document()->size().width() / 2,
+                         -(stateBorder_.height() + outline_pen_.widthF() / 2) / 2);
 }
 
 StateNameTextItem::StateNameTextItem(const QString & text, State * parent)
-    : QGraphicsTextItem(text, static_cast<QGraphicsItem*>(parent)),
+    : QGraphicsTextItem(text, parent),
       parent_(parent) {
   setTextInteractionFlags(Qt::TextEditorInteraction);
-  QFont fixedSizeFont { font() };
-  fixedSizeFont.setPointSize(kStateNameTextSize_);
-  setFont(fixedSizeFont);
+  QFont serifFont("Verdana", kStateNameTextSize_, QFont::Bold);
+  setFont(serifFont);
   connect(document(), &QTextDocument::contentsChanged, this, &StateNameTextItem::updateGeometry);
-  updateGeometry();
+}
+
+void StateNameTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+  // Makes the parent item, State, the mouse grabber item. This makes it possible to move a state even with mouse over
+  // the name of the state.
+  event->ignore();
+  // To be able to move the cursor with mouse when the name of the state has been selected.
+  QGraphicsTextItem::mousePressEvent(event);
 }
