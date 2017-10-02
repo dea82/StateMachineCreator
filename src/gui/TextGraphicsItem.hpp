@@ -20,56 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef CREATOR_STATE_HPP_
-#define CREATOR_STATE_HPP_
+#ifndef GUI_TEXTGRAPHICSITEM_HPP_
+#define GUI_TEXTGRAPHICSITEM_HPP_
 
 #include <QGraphicsTextItem>
-#include <QRect>
-#include <QString>
-#include <forward_list>
-#include <memory>
 
-#include "OutlineGraphicsItem.hpp"
+class State;
+class QFont;
 
-class QGraphicsSceneMouseEvent;
-class QPainter;
-class QRectF;
-class QStyleOptionGraphicsItem;
-class QVariant;
-class QWidget;
-class ResizeHandle;
-class StateNameTextItem;
-class TextGraphicsItem;
-
-class State : public OutlineGraphicsItem {
+class TextGraphicsItem : public QGraphicsTextItem {
+Q_OBJECT
  public:
-  explicit State(const int w = kDefaultWidth_, const int h = kDefaultHeight_);
-
-  QRectF boundingRect() const override;
-
-  QPainterPath shape() const override;
-
-  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override;
-
-  QString getName() const {
-    return name_;
-  }
-
-  QRectF getStateBorder() {
-    return stateBorder_;
-  }
-  void updateStateNamePos() const;
-
+  TextGraphicsItem(const QString &text, State *parent, QFont&& font);
+ public slots:
+  void UpdateGeometry() const;
+ protected:
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt) override;
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
  private:
-  QString stateName_;
-  static constexpr int kDefaultWidth_ { 100 };
-  static constexpr int kDefaultHeight_ { 60 };
-  static constexpr int kRadius_ { 10 };
-  static constexpr int kTextPadding_ { 1 };
-  static constexpr int kStateBorderWidth_ { 2 };
-  QRectF stateBorder_;
-  TextGraphicsItem * stateNameText_;
-  QPen outline_pen_;
+  void SetTextInteraction(bool enable_text_interaction);
+  State * parent_;
 };
 
-#endif  // CREATOR_STATE_HPP_
+#endif  // GUI_TEXTGRAPHICSITEM_HPP_

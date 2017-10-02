@@ -34,6 +34,8 @@
 #include <QTextDocument>
 #include <forward_list>
 
+#include "TextGraphicsItem.hpp"
+
 class QString;
 class QStyleOptionGraphicsItem;
 class QWidget;
@@ -42,7 +44,7 @@ State::State(const int w, const int h)
     : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kState, "State"),
       stateName_(name_),
       stateBorder_(QRect(-w / 2, -h / 2, w, h)),
-      stateNameText_(new StateNameTextItem(name_, this)),
+      stateNameText_ { new TextGraphicsItem { name_, this, QFont { "Verdana", 14, QFont::Bold } } },
       outline_pen_() {
   outline_pen_.setWidth(kStateBorderWidth_);
   updateStateNamePos();
@@ -57,8 +59,11 @@ void State::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/,
   QPainterPath painterPath;
   painterPath.addRoundedRect(stateBorder_, kRadius_, kRadius_);
   painter->drawPath(painterPath);
-  painter->drawLine(-stateBorder_.width() / 2, -stateBorder_.height() / 2 + stateNameText_->document()->size().height(),
-                    stateBorder_.width() / 2, -stateBorder_.height() / 2 + stateNameText_->document()->size().height());
+  painter->drawLine(
+      -stateBorder_.width() / 2,
+      -stateBorder_.height() / 2 + outline_pen_.widthF() / 2 + stateNameText_->document()->size().height(),
+      stateBorder_.width() / 2,
+      -stateBorder_.height() / 2 + outline_pen_.widthF() / 2 + stateNameText_->document()->size().height());
 }
 
 QPainterPath State::shape() const {
@@ -70,22 +75,5 @@ QPainterPath State::shape() const {
 
 void State::updateStateNamePos() const {
   stateNameText_->setPos(-stateNameText_->document()->size().width() / 2,
-                         -(stateBorder_.height() + outline_pen_.widthF() / 2) / 2);
-}
-
-StateNameTextItem::StateNameTextItem(const QString & text, State * parent)
-    : QGraphicsTextItem(text, parent),
-      parent_(parent) {
-  setTextInteractionFlags(Qt::TextEditorInteraction);
-  QFont serifFont("Verdana", kStateNameTextSize_, QFont::Bold);
-  setFont(serifFont);
-  connect(document(), &QTextDocument::contentsChanged, this, &StateNameTextItem::updateGeometry);
-}
-
-void StateNameTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-  // Makes the parent item, State, the mouse grabber item. This makes it possible to move a state even with mouse over
-  // the name of the state.
-  event->ignore();
-  // To be able to move the cursor with mouse when the name of the state has been selected.
-  QGraphicsTextItem::mousePressEvent(event);
+                         -(stateBorder_.height() - outline_pen_.widthF() / 2) / 2);
 }
