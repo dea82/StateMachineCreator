@@ -22,9 +22,6 @@
 
 #include "OutlineGraphicsItem.hpp"
 
-#include <QColor>
-#include <QDebug>
-#include <QGraphicsItem>
 #include <QPainter>
 
 std::map<OutlineGraphicsItem::ItemType, int> OutlineGraphicsItem::nameCounter;

@@ -22,10 +22,6 @@
 
 #include "InsertElementToolBar.hpp"
 
-#include <QAction>
-#include <QActionGroup>
-#include <QVariant>
-
 class QIcon;
 class QString;
 class QWidget;

@@ -36,7 +36,7 @@ class WorkAreaScene : public QGraphicsScene {
 Q_OBJECT
 
  public:
-  explicit WorkAreaScene(QObject *parent = 0);
+  explicit WorkAreaScene(QObject *parent);
   void StartInsertMode(const OutlineGraphicsItem::ItemType& element);
   void EndInsertMode();
   void AbortInsertMode();
@@ -58,6 +58,7 @@ Q_OBJECT
       kMoving
     } state;
     OutlineGraphicsItem::ItemType element;
+    InsertMode(State insert_state, OutlineGraphicsItem::ItemType element_type);
   };
   InsertMode insertMode_;
   QGraphicsItem* focusElement_;

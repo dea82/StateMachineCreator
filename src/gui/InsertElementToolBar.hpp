@@ -44,7 +44,7 @@ Q_OBJECT
   void UncheckCurrentAction();
 
  signals:
-  void Triggered(const OutlineGraphicsItem::ItemType& element, const bool checked);
+  void Triggered(const OutlineGraphicsItem::ItemType& element, bool checked);
 
  private slots:
   void ActionTriggered(QAction* action);

@@ -6,8 +6,6 @@
  */
 
 #include <zmq.hpp>
-#include <zmq.h>
-#include <string.h>
 #include <iostream>
 #include <unistd.h>
 

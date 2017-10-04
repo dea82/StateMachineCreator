@@ -41,7 +41,7 @@ class GraphicsViewZoom : public QObject {
 Q_OBJECT
  public:
   explicit GraphicsViewZoom(QGraphicsView* view);
-  void SetModifierKey(const Qt::KeyboardModifiers modifiers);
+  void SetModifierKey(Qt::KeyboardModifiers modifiers);
 
  protected:
   bool eventFilter(QObject* object, QEvent* event) override;
@@ -50,7 +50,7 @@ Q_OBJECT
   bool WheelEvent(QWheelEvent* event);
   bool GestureEvent(QGestureEvent* event);
   void PinchTriggered(QPinchGesture* pinch);
-  void Zoom(const qreal factor);
+  void Zoom(qreal factor);
 
   QGraphicsView* const view_;
   Qt::KeyboardModifiers modifier_key_;

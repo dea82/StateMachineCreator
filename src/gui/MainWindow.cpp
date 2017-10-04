@@ -26,13 +26,8 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QGraphicsView>
-#include <QIcon>
-#include <QPainter>
-#include <QRect>
-#include <QSize>
 #include <QStatusBar>
 #include <QToolBar>
-#include <QWidget>
 
 #include "InsertElementToolBar.hpp"
 #include "WorkAreaScene.hpp"
@@ -43,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
   setWindowTitle(tr("State Machine Creator"));
 
   auto screenGeometry = QApplication::desktop()->screenGeometry();
-  resize(screenGeometry.width() * 0.6, screenGeometry.height() * 0.6);
+  resize(static_cast<int>(screenGeometry.width() * 0.6), static_cast<int>(screenGeometry.height() * 0.6));
 
   setContextMenuPolicy(Qt::NoContextMenu);
 

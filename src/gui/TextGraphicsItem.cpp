@@ -22,12 +22,12 @@
 
 #include "TextGraphicsItem.hpp"
 
+#include <QCursor>
 #include <QDebug>
 #include <QFont>
 #include <QGraphicsSceneMouseEvent>
 #include <QTextCursor>
 #include <QTextDocument>
-#include <memory>
 
 #include "State.hpp"
 

@@ -24,13 +24,8 @@
 
 #include <QApplication>
 #include <qmath.h>
-#include <QEvent>
 #include <QGestureEvent>
 #include <QGraphicsView>
-#include <QMouseEvent>
-#include <QPinchGesture>
-#include <QPointF>
-#include <QWheelEvent>
 
 namespace statemachinecreator {
 namespace gui {
@@ -51,13 +46,13 @@ void GraphicsViewZoom::SetModifierKey(const Qt::KeyboardModifiers modifiers) {
 
 bool GraphicsViewZoom::eventFilter(QObject* /*object*/, QEvent* event) {
   if (event->type() == QEvent::MouseMove) {
-    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    auto mouse_event = dynamic_cast<QMouseEvent*>(event);
     target_viewport_pos_ = mouse_event->pos();
     target_scene_pos_ = view_->mapToScene(mouse_event->pos());
   } else if (event->type() == QEvent::Wheel) {
-    return WheelEvent(static_cast<QWheelEvent*>(event));
+    return WheelEvent(dynamic_cast<QWheelEvent*>(event));
   } else if (event->type() == QEvent::Gesture) {
-    return GestureEvent(static_cast<QGestureEvent*>(event));
+    return GestureEvent(dynamic_cast<QGestureEvent*>(event));
   }
   return false;
 }
@@ -77,7 +72,7 @@ bool GraphicsViewZoom::WheelEvent(QWheelEvent* event) {
 bool GraphicsViewZoom::GestureEvent(QGestureEvent* event) {
   QGesture* pinch = event->gesture(Qt::PinchGesture);
   if (pinch) {
-    PinchTriggered(static_cast<QPinchGesture*>(pinch));
+    PinchTriggered(dynamic_cast<QPinchGesture*>(pinch));
   }
   return true;
 }

@@ -22,17 +22,10 @@
 
 #include "State.hpp"
 
-#include <QDebug>
 #include <QFont>
-#include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
-#include <QMargins>
 #include <QPainter>
-#include <QPainterPath>
-#include <QPen>
-#include <QSizeF>
 #include <QTextDocument>
-#include <forward_list>
 
 #include "TextGraphicsItem.hpp"
 
@@ -44,7 +37,7 @@ State::State(const int w, const int h)
     : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kState, "State"),
       stateName_(name_),
       stateBorder_(QRect(-w / 2, -h / 2, w, h)),
-      stateNameText_ { new TextGraphicsItem { name_, this, QFont { "Verdana", 14, QFont::Bold } } },
+      stateNameText_{new TextGraphicsItem{name_, this, QFont {"Verdana", 14, QFont::Bold}}},
       outline_pen_() {
   outline_pen_.setWidth(kStateBorderWidth_);
   updateStateNamePos();
@@ -54,21 +47,22 @@ QRectF State::boundingRect() const {
   return shape().boundingRect();
 }
 
-void State::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
+void State::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/) {
   painter->setPen(outline_pen_);
   QPainterPath painterPath;
   painterPath.addRoundedRect(stateBorder_, kRadius_, kRadius_);
   painter->drawPath(painterPath);
-  painter->drawLine(
-      -stateBorder_.width() / 2,
-      -stateBorder_.height() / 2 + outline_pen_.widthF() / 2 + stateNameText_->document()->size().height(),
-      stateBorder_.width() / 2,
-      -stateBorder_.height() / 2 + outline_pen_.widthF() / 2 + stateNameText_->document()->size().height());
+  painter->drawLine(QPointF(-stateBorder_.width() / 2,
+                            -stateBorder_.height() / 2 + outline_pen_.widthF() / 2
+                                + stateNameText_->document()->size().height()),
+                    QPointF(stateBorder_.width() / 2,
+                            -stateBorder_.height() / 2 + outline_pen_.widthF() / 2
+                                + stateNameText_->document()->size().height()));
 }
 
 QPainterPath State::shape() const {
   QPainterPath painterPath;
-  painterPath.addRoundedRect(stateBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2),
+  painterPath.addRoundedRect(stateBorder_ + (QMarginsF() + outline_pen_.widthF() / 2.0F),
                              kRadius_ + outline_pen_.widthF() / 2, kRadius_ + outline_pen_.widthF() / 2);
   return painterPath;
 }

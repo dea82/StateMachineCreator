@@ -23,7 +23,7 @@
 #ifndef CREATOR_OUTLINEGRAPHICSITEM_HPP_
 #define CREATOR_OUTLINEGRAPHICSITEM_HPP_
 
-#include <QGraphicsItem>
+#include <QGraphicsRectItem>
 #include <QPen>
 #include <QString>
 #include <map>
@@ -31,7 +31,7 @@
 class QPainter;
 
 // TODO: Find a better name, this class has no coupling to outline anymore.
-class OutlineGraphicsItem : public QGraphicsItem {
+class OutlineGraphicsItem : public QGraphicsRectItem {
  public:
   enum ItemType {
     kElement = UserType,  // Base class
@@ -41,8 +41,9 @@ class OutlineGraphicsItem : public QGraphicsItem {
   };
 
   explicit OutlineGraphicsItem(const ItemType& type, const QString& name);
-  virtual ~OutlineGraphicsItem() = default;
+
   QPen GetHoverPen();
+  ~OutlineGraphicsItem() override = default;
 
  protected:
   void PaintBoundingRect(QPainter *painter) const;

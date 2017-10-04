@@ -22,30 +22,27 @@
 
 #include "WorkAreaScene.hpp"
 
-#include <QDebug>
 #include <QEvent>
-#include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
 #include "EntryPoint.hpp"
-#include "OutlineGraphicsItem.hpp"
 #include "State.hpp"
 #include "OutlineStroke.hpp"
 
 WorkAreaScene::WorkAreaScene(QObject *parent)
     : QGraphicsScene(parent),
-      insertMode_ { .state = InsertMode::State::kNotActive, .element = OutlineGraphicsItem::ItemType::kEntryPoint },
-      focusElement_ { nullptr },
-      temporaryInsertItem_ { nullptr } {
+      insertMode_{InsertMode::State::kNotActive, OutlineGraphicsItem::ItemType::kEntryPoint},
+      focusElement_{nullptr},
+      temporaryInsertItem_{nullptr} {
 }
 
 void WorkAreaScene::DeselectAllElements() const {
-  for (const auto& item : selectedItems()) {
+  for (const auto &item : selectedItems()) {
     item->setSelected(false);
   }
 }
 
-void WorkAreaScene::StartInsertMode(const OutlineGraphicsItem::ItemType& element) {
+void WorkAreaScene::StartInsertMode(const OutlineGraphicsItem::ItemType &element) {
   if (insertMode_.state == InsertMode::State::kMoving) {
     removeItem(temporaryInsertItem_);
   }
@@ -91,12 +88,12 @@ void WorkAreaScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
   QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
-QGraphicsItem* WorkAreaScene::FocusElement(const QList<QGraphicsItem *>& items) const {
+QGraphicsItem *WorkAreaScene::FocusElement(const QList<QGraphicsItem *> &items) const {
   if (items.isEmpty()) {
     return nullptr;
   }
-  QGraphicsItem* focusElement = nullptr;
-  for (const auto& item : items) {
+  QGraphicsItem *focusElement = nullptr;
+  for (const auto &item : items) {
     if (!focusElement) {
       focusElement = item;
     } else if ((focusElement->type() == OutlineGraphicsItem::ItemType::kState)
@@ -105,4 +102,8 @@ QGraphicsItem* WorkAreaScene::FocusElement(const QList<QGraphicsItem *>& items) 
     }
   }
   return focusElement;
+}
+WorkAreaScene::InsertMode::InsertMode(WorkAreaScene::InsertMode::State insert_state,
+                                      OutlineGraphicsItem::ItemType element_type) :
+    state(insert_state), element(element_type) {
 }

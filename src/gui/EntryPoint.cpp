@@ -22,7 +22,6 @@
 
 #include "EntryPoint.hpp"
 
-#include <QMarginsF>
 #include <QPainter>
 
 QRectF EntryPoint::boundingRect() const {
@@ -31,11 +30,11 @@ QRectF EntryPoint::boundingRect() const {
 
 QPainterPath EntryPoint::shape() const {
   QPainterPath painterPath;
-  painterPath.addEllipse(entryPointBorder_.marginsAdded(QMargins() += outline_pen_.widthF() / 2.0F));
+  painterPath.addEllipse(entryPointBorder_ + (QMarginsF() + outline_pen_.widthF() / 2.0F));
   return painterPath;
 }
 
-void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
+void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/) {
   painter->setPen(outline_pen_);
   painter->setBrush(Qt::SolidPattern);
   painter->drawEllipse(entryPointBorder_);

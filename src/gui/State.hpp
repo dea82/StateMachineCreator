@@ -43,13 +43,13 @@ class TextGraphicsItem;
 
 class State : public OutlineGraphicsItem {
  public:
-  explicit State(const int w = kDefaultWidth_, const int h = kDefaultHeight_);
+  explicit State(int w = kDefaultWidth_, int h = kDefaultHeight_);
 
   QRectF boundingRect() const override;
 
   QPainterPath shape() const override;
 
-  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override;
+  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
   QString getName() const {
     return name_;
@@ -65,7 +65,6 @@ class State : public OutlineGraphicsItem {
   static constexpr int kDefaultWidth_ { 100 };
   static constexpr int kDefaultHeight_ { 60 };
   static constexpr int kRadius_ { 10 };
-  static constexpr int kTextPadding_ { 1 };
   static constexpr int kStateBorderWidth_ { 2 };
   QRectF stateBorder_;
   TextGraphicsItem * stateNameText_;

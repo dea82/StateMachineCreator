@@ -34,9 +34,9 @@ class QRectF;
 
 class EntryPoint : public OutlineGraphicsItem {
  public:
-  explicit EntryPoint(const qreal diameter = kDefaultDiameter_)
+  explicit EntryPoint(qreal diameter = kDefaultDiameter_)
       : OutlineGraphicsItem(OutlineGraphicsItem::ItemType::kEntryPoint, "Entry point"),
-        entryPointBorder_(QRect(-diameter / 2, -diameter / 2, diameter, diameter)),
+        entryPointBorder_(QRectF(-diameter / 2.0F, -diameter / 2.0F, diameter, diameter)),
         outline_pen_() {
     this->setZValue(1);
     outline_pen_.setWidth(2);
@@ -46,14 +46,10 @@ class EntryPoint : public OutlineGraphicsItem {
 
   QPainterPath shape() const override;
 
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
-
-  QString getName() const noexcept {
-    return name_;
-  }
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
  private:
-  QRect entryPointBorder_;
+  QRectF entryPointBorder_;
   static constexpr qreal kDefaultDiameter_ = 22;
   QPen outline_pen_;
 };
