@@ -23,7 +23,6 @@
 #ifndef CREATOR_STATE_HPP_
 #define CREATOR_STATE_HPP_
 
-#include <QGraphicsTextItem>
 #include <QRect>
 #include <QString>
 #include <forward_list>

@@ -40,8 +40,8 @@ QRectF OutlineStroke::boundingRect() const {
 }
 
 void OutlineStroke::paint(QPainter *painter,
-                          const QStyleOptionGraphicsItem __unused *option,
-                          QWidget __unused *widget) {
+                          const QStyleOptionGraphicsItem */*option*/,
+                          QWidget */*widget*/) {
   auto original_shape = parentItem()->shape();
 
   QPainterPathStroker painterPathStroker;

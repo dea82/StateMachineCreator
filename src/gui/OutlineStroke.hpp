@@ -36,11 +36,7 @@ class OutlineStroke : public QGraphicsItem {
 
   QRectF boundingRect() const override;
 
-  void paint(QPainter* painter, const QStyleOptionGraphicsItem __unused * option, QWidget __unused * widget) override;
-
-  void SetPen(const QPen& pen) {
-    pen_ = pen;
-  }
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
   QPen GetPen() const {
     return pen_;
