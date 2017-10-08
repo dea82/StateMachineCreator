@@ -36,7 +36,6 @@ Q_OBJECT
   void UpdateGeometry() const;
  protected:
   void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt) override;
-  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
   QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
  private:
   void SetTextInteraction(bool enable_text_interaction);

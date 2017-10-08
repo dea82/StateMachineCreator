@@ -51,14 +51,12 @@ class State : public OutlineGraphicsItem {
 
   void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-  QString getName() const {
-    return name_;
-  }
-
-  QRectF getStateBorder() {
-    return stateBorder_;
-  }
   void updateStateNamePos() const;
+
+ protected:
+  bool sceneEventFilter(QGraphicsItem *watched, QEvent *event) override;
+  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
 
  private:
   QString stateName_;

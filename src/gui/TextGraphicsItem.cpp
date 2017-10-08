@@ -80,7 +80,3 @@ QVariant TextGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange change, 
   }
   return QGraphicsTextItem::itemChange(change, value);
 }
-
-void TextGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-  QGraphicsTextItem::mousePressEvent(event);
-}

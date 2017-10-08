@@ -43,6 +43,16 @@ State::State(const int w, const int h)
   updateStateNamePos();
 }
 
+bool State::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
+  if ((watched == stateNameText_) && (event->type() == QEvent::GraphicsSceneMouseMove)) {
+    if (stateNameText_->textInteractionFlags() == Qt::NoTextInteraction) {
+      mouseMoveEvent(dynamic_cast<QGraphicsSceneMouseEvent *>(event));
+      return true;
+    }
+  }
+  return false;
+}
+
 QRectF State::boundingRect() const {
   return shape().boundingRect();
 }
@@ -70,4 +80,11 @@ QPainterPath State::shape() const {
 void State::updateStateNamePos() const {
   stateNameText_->setPos(-stateNameText_->document()->size().width() / 2,
                          -(stateBorder_.height() - outline_pen_.widthF() / 2) / 2);
+}
+
+QVariant State::itemChange(GraphicsItemChange change, const QVariant &value) {
+  if (change == QGraphicsItem::ItemSceneHasChanged) {
+    stateNameText_->installSceneEventFilter(this);
+  }
+  return QGraphicsItem::itemChange(change, value);
 }
