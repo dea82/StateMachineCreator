@@ -34,13 +34,11 @@ class QPainter;
 class OutlineGraphicsItem : public QGraphicsRectItem {
  public:
   enum ItemType {
-    kElement = UserType,  // Base class
-    kEntryPoint,
+    kEntryPoint = UserType + 1,
     kState,
-    kResizeHandle
   };
 
-  explicit OutlineGraphicsItem(const ItemType& type, const QString& name);
+  OutlineGraphicsItem(const ItemType& type, const QString& name);
 
   QPen GetHoverPen();
   ~OutlineGraphicsItem() override = default;

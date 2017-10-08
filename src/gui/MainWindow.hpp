@@ -41,11 +41,6 @@ Q_OBJECT
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow() override = default;
 
-  enum class InsertActions {
-    kEntryPoint,
-    kState
-  };
-
  public slots:
   void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, bool checked);
   void InsertModeEnded();
