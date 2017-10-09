@@ -38,6 +38,7 @@ TextGraphicsItem::TextGraphicsItem(const QString &text, State *parent, QFont&& f
   setFlags(ItemIsSelectable | ItemIsFocusable);
   setTextInteractionFlags(Qt::NoTextInteraction);
   connect(document(), &QTextDocument::contentsChanged, this, &TextGraphicsItem::UpdateGeometry);
+  setCursor(Qt::SizeAllCursor);
 }
 
 void TextGraphicsItem::UpdateGeometry() const {
@@ -49,6 +50,7 @@ void TextGraphicsItem::SetTextInteraction(bool enable_text_interaction) {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setFocus(Qt::MouseFocusReason);
     setSelected(true);
+    setCursor(Qt::IBeamCursor);
   } else if (!enable_text_interaction && textInteractionFlags() == Qt::TextEditorInteraction) {
     setTextInteractionFlags(Qt::NoTextInteraction);
     // Deselect text (else it keeps gray shade):
@@ -56,6 +58,7 @@ void TextGraphicsItem::SetTextInteraction(bool enable_text_interaction) {
     cursor.clearSelection();
     setTextCursor(cursor);
     clearFocus();
+    setCursor(Qt::SizeAllCursor);
   }
 }
 

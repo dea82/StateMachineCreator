@@ -22,6 +22,7 @@
 
 #include "State.hpp"
 
+#include <QCursor>
 #include <QFont>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -41,6 +42,7 @@ State::State(const int w, const int h)
       outline_pen_() {
   outline_pen_.setWidth(kStateBorderWidth_);
   updateStateNamePos();
+  setCursor(Qt::SizeAllCursor);
 }
 
 bool State::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
@@ -58,6 +60,7 @@ QRectF State::boundingRect() const {
 }
 
 void State::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/) {
+  painter->setRenderHint(QPainter::Antialiasing);
   painter->setPen(outline_pen_);
   QPainterPath painterPath;
   painterPath.addRoundedRect(stateBorder_, kRadius_, kRadius_);

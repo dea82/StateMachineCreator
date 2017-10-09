@@ -72,7 +72,6 @@ MainWindow::MainWindow(QWidget *parent)
   qDebug() << "GraphicsView height: " << h;
   int w = graphicsView_->size().width();
   qDebug() << "GraphicsView width: " << w;
-  graphicsView_->setRenderHint(QPainter::Antialiasing);
   graphicsView_->setSceneRect(QRect(0, 0, w, h));
 
   //

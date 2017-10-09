@@ -35,6 +35,7 @@ QPainterPath EntryPoint::shape() const {
 }
 
 void EntryPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/) {
+  painter->setRenderHint(QPainter::Antialiasing);
   painter->setPen(outline_pen_);
   painter->setBrush(Qt::SolidPattern);
   painter->drawEllipse(entryPointBorder_);
