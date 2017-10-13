@@ -28,6 +28,7 @@
 #include <forward_list>
 #include <memory>
 
+#include "GraphicsItemResizingHandler.hpp"
 #include "OutlineGraphicsItem.hpp"
 
 class QGraphicsSceneMouseEvent;
@@ -53,19 +54,19 @@ class State : public OutlineGraphicsItem {
   void updateStateNamePos() const;
 
  protected:
-  bool sceneEventFilter(QGraphicsItem *watched, QEvent *event) override;
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-
+  bool sceneEventFilter(QGraphicsItem* watched, QEvent* event) override;
+  QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
  private:
   QString stateName_;
-  static constexpr int kDefaultWidth_ { 100 };
-  static constexpr int kDefaultHeight_ { 60 };
-  static constexpr int kRadius_ { 10 };
-  static constexpr int kStateBorderWidth_ { 2 };
+  static constexpr int kDefaultWidth_{100};
+  static constexpr int kDefaultHeight_{60};
+  static constexpr int kRadius_{10};
+  static constexpr int kStateBorderWidth_{2};
   QRectF stateBorder_;
-  TextGraphicsItem * stateNameText_;
+  TextGraphicsItem* stateNameText_;
   QPen outline_pen_;
+  //GraphicsItemResizingHandler* resizer_;
 };
 
 #endif  // CREATOR_STATE_HPP_

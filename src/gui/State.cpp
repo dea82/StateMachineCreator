@@ -43,9 +43,12 @@ State::State(const int w, const int h)
   outline_pen_.setWidth(kStateBorderWidth_);
   updateStateNamePos();
   setCursor(Qt::SizeAllCursor);
+  //resizer_ = nullptr;//new statemachinecreator::gui::GraphicsItemResizingHandler<State>(this);
 }
 
 bool State::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
+  // Propagate mouse move event from state heading text item to state item. This enables moving of both objects even
+  // with mouse pointer above state heading test item.
   if ((watched == stateNameText_) && (event->type() == QEvent::GraphicsSceneMouseMove)) {
     if (stateNameText_->textInteractionFlags() == Qt::NoTextInteraction) {
       mouseMoveEvent(dynamic_cast<QGraphicsSceneMouseEvent *>(event));
@@ -87,7 +90,11 @@ void State::updateStateNamePos() const {
 
 QVariant State::itemChange(GraphicsItemChange change, const QVariant &value) {
   if (change == QGraphicsItem::ItemSceneHasChanged) {
+    // Event listener not possible to add until state is added to scene.
     stateNameText_->installSceneEventFilter(this);
+  }
+  if (change == QGraphicsItem::ItemSelectedHasChanged) {
+
   }
   return QGraphicsItem::itemChange(change, value);
 }

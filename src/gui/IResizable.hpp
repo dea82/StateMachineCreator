@@ -1,0 +1,12 @@
+//
+// Created by Andreas Laghamn on 2018-06-26.
+//
+
+#ifndef STATEMACHINECREATOR_IRESIZABLE_HPP
+#define STATEMACHINECREATOR_IRESIZABLE_HPP
+
+class IResizable {
+
+};
+
+#endif //STATEMACHINECREATOR_IRESIZABLE_HPP

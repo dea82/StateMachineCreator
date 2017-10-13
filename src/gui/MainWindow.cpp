@@ -68,9 +68,9 @@ MainWindow::MainWindow(QWidget *parent)
   show();
 
   graphicsView_->viewport()->setMouseTracking(true);
-  int h = graphicsView_->size().height();
+  auto h = graphicsView_->size().height();
   qDebug() << "GraphicsView height: " << h;
-  int w = graphicsView_->size().width();
+  auto w = graphicsView_->size().width();
   qDebug() << "GraphicsView width: " << w;
   graphicsView_->setSceneRect(QRect(0, 0, w, h));
 
