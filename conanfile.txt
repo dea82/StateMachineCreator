@@ -1,0 +1,10 @@
+[requires]
+cppzmq/4.2.2@bincrafters/stable
+Qt/5.11.1@bincrafters/stable
+
+[generators]
+cmake
+
+[options]
+Qt:qtsvg=True
+Qt:opengl=no

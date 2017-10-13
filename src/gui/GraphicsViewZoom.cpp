@@ -33,7 +33,7 @@ namespace gui {
 GraphicsViewZoom::GraphicsViewZoom(QGraphicsView* view)
     : QObject(view),
       view_(view),
-      modifier_key_(Qt::NoModifier) {
+      modifier_keys_(Qt::NoModifier) {
   // Viewport is the painting area in the middle (scrollbars not included) of QGraphicsView
   view->viewport()->installEventFilter(this);
   view->viewport()->setMouseTracking(true);
@@ -41,7 +41,7 @@ GraphicsViewZoom::GraphicsViewZoom(QGraphicsView* view)
 }
 
 void GraphicsViewZoom::SetModifierKey(const Qt::KeyboardModifiers modifiers) {
-  modifier_key_ = modifiers;
+  modifier_keys_ = modifiers;
 }
 
 bool GraphicsViewZoom::eventFilter(QObject* /*object*/, QEvent* event) {
@@ -58,7 +58,7 @@ bool GraphicsViewZoom::eventFilter(QObject* /*object*/, QEvent* event) {
 }
 
 bool GraphicsViewZoom::WheelEvent(QWheelEvent* event) {
-  if ((event->source() == Qt::MouseEventNotSynthesized) && (QApplication::keyboardModifiers() == modifier_key_)
+  if ((event->source() == Qt::MouseEventNotSynthesized) && (QApplication::keyboardModifiers() == modifier_keys_)
       && (event->orientation() == Qt::Vertical)) {
     double angle = event->angleDelta().y();
     double factor = qPow(kZoomFactorBase_, angle);

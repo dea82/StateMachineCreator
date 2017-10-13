@@ -1,14 +1,34 @@
-sudo: required
-dist: trusty
+env:
+  global:
+    secure: ebaQLHG9pRF+iL4OFTJw1woFV/g27+UOprtXKy4osaVQrDbYQZ3qzfH8eEMZNWqheQPomfM4LRfobsV21F0K+fYF9/7npJHa2wT/AEgALwE1j22PZOcj+UnNc5sZMC+7WcJGdYK/PICFW+BKtJOnYqtOIRatV9Mcn2ji2H2IYohCM1SuTWFDhvXBVHgrRDNJNT5oA1LMxEnSkUDF6JQVOxAE3PmcGBlm4j96xAwg55k1Ptkc7Jo9S4gDZq9FU9I9iggFzV7PO1iuzBzukx15hhOA+PEC/gqwL+DsMyAvP2eeQU8H0Ajd4hyOtbGgJFi6asggkghbRD8R441yipvwYTXzglEgUwoZoVj0aoDLzexmKia7b4yO2u2Kg61/APwHFMn4LRdBjWKuVrdYrA5TWFiH+yo7i2LuMsMml/8o2vAI5u7qTbxecCE/b1RXUWVnG711B+/R6wqOZqmFKxTHq8aF4PWmac1c8Pgfxq8KRYk8tHlvBqLIZbZGg8bZgsUTUeYLUqkFs3aYmNFooPQRFPMXFqHQssOnbGK5qMkkjHkQRgSmgpRXeMQC7Ew68MU/OAVRHOlE6IittNOXo8IMxONPPQn/QqVWVXz7eoyxpNCyOBUMMQE+Ukaqw+n+0DIwceBj/KWu5ftu9H4KZI1i7fIlZgN4lo6IxS39ZSGQ3lE=
 
-services:
+linux:
+  os: linux
+  sudo: required
+  language: python
+  python: '3.6'
+  services: &1
   - docker
-
+matrix:
+  include:
+  - os: linux
+    sudo: required
+    language: python
+    python: '3.6'
+    services: *1
+    env: DOCKER_IMAGE=lasote/conangcc72 CONAN_PROFILE=linux-gcc72-amd64-release
+  - os: linux
+    sudo: required
+    language: python
+    python: '3.6'
+    services: *1
+    env: DOCKER_IMAGE=lasote/conanclang60 CONAN_PROFILE=linux-clang60-amd64-release
 before_install:
-# Setup docker container
-  - docker build -t build_image .
-  - docker run -itd -v $TRAVIS_BUILD_DIR:/repo --name build_container build_image
-
-script:  
-  - docker exec build_container cmake -H/repo -B/build
-  - docker exec build_container cmake --build /build -- -j4
+- echo $gpg_password | gpg --passphrase-fd 0 conan-repo.cfg.gpg
+- docker pull $DOCKER_IMAGE
+- docker run -itd -v $TRAVIS_BUILD_DIR:/repo --name build_container $DOCKER_IMAGE
+script:
+- docker exec build_container /repo/build-tools/build_conan_dependencies.py -c https://github.com/dea82/conan-config.git
+  -pr=$CONAN_PROFILE -ar=/repo/conan-repo.cfg /repo
+- docker exec build_container cmake -H/repo -B/repo/build/$CONAN_PROFILE
+- docker exec build_container cmake --build /repo/build/$CONAN_PROFILE

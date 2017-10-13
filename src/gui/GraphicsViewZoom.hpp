@@ -25,8 +25,6 @@
 
 #include <QObject>
 #include <QPointF>
-#include <Qt>
-#include <QtGlobal>
 
 class QEvent;
 class QGestureEvent;
@@ -53,7 +51,7 @@ Q_OBJECT
   void Zoom(qreal factor);
 
   QGraphicsView* const view_;
-  Qt::KeyboardModifiers modifier_key_;
+  Qt::KeyboardModifiers modifier_keys_;
   QPointF target_scene_pos_;
   QPointF target_viewport_pos_;
 

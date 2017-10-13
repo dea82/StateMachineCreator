@@ -23,6 +23,7 @@
 #ifndef CREATOR_ENTRYPOINT_HPP_
 #define CREATOR_ENTRYPOINT_HPP_
 
+#include <QCursor>
 #include <QString>
 
 #include "OutlineGraphicsItem.hpp"
@@ -40,6 +41,7 @@ class EntryPoint : public OutlineGraphicsItem {
         outline_pen_() {
     this->setZValue(1);
     outline_pen_.setWidth(2);
+    setCursor(Qt::SizeAllCursor);
   }
 
   QRectF boundingRect() const override;

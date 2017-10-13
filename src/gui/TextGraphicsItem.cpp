@@ -45,6 +45,7 @@ void TextGraphicsItem::UpdateGeometry() const {
   parent_->updateStateNamePos();
 }
 
+// TODO: Split into two separate functions to get rid of bool parameter
 void TextGraphicsItem::SetTextInteraction(bool enable_text_interaction) {
   if (enable_text_interaction && textInteractionFlags() == Qt::NoTextInteraction) {
     setTextInteractionFlags(Qt::TextEditorInteraction);
