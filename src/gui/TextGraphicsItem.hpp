@@ -40,6 +40,8 @@ Q_OBJECT
  private:
   void SetTextInteraction(bool enable_text_interaction);
   State * parent_;
+  void DisableTextInteraction();
+  void EnableTextInteraction();
 };
 
 #endif  // GUI_TEXTGRAPHICSITEM_HPP_

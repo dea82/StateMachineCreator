@@ -45,31 +45,12 @@ void TextGraphicsItem::UpdateGeometry() const {
   parent_->updateStateNamePos();
 }
 
-// TODO: Split into two separate functions to get rid of bool parameter
-void TextGraphicsItem::SetTextInteraction(bool enable_text_interaction) {
-  if (enable_text_interaction && textInteractionFlags() == Qt::NoTextInteraction) {
-    setTextInteractionFlags(Qt::TextEditorInteraction);
-    setFocus(Qt::MouseFocusReason);
-    setSelected(true);
-    setCursor(Qt::IBeamCursor);
-  } else if (!enable_text_interaction && textInteractionFlags() == Qt::TextEditorInteraction) {
-    setTextInteractionFlags(Qt::NoTextInteraction);
-    // Deselect text (else it keeps gray shade):
-    QTextCursor cursor = this->textCursor();
-    cursor.clearSelection();
-    setTextCursor(cursor);
-    clearFocus();
-    setCursor(Qt::SizeAllCursor);
-  }
-}
-
 void TextGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
   if (textInteractionFlags() == Qt::TextEditorInteraction) {
     QGraphicsTextItem::mouseDoubleClickEvent(event);
     return;
   }
-
-  SetTextInteraction(true);
+  EnableTextInteraction();
 
   std::unique_ptr<QGraphicsSceneMouseEvent> click(new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress));
   click->setButton(event->button());
@@ -80,7 +61,27 @@ void TextGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
 QVariant TextGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) {
   if ((change == QGraphicsItem::ItemSelectedChange) && (textInteractionFlags() != Qt::NoTextInteraction)
       && !value.toBool()) {
-    SetTextInteraction(false);
+    DisableTextInteraction();
   }
   return QGraphicsTextItem::itemChange(change, value);
+}
+
+void TextGraphicsItem::DisableTextInteraction() {
+  if (textInteractionFlags() == Qt::TextEditorInteraction) {
+    setTextInteractionFlags(Qt::NoTextInteraction);
+    // Deselect text (else it keeps gray shade):
+    QTextCursor cursor = this->textCursor();
+    cursor.clearSelection();
+    setTextCursor(cursor);
+    clearFocus();
+    setCursor(Qt::SizeAllCursor);
+  }
+}
+void TextGraphicsItem::EnableTextInteraction() {
+  if (textInteractionFlags() == Qt::NoTextInteraction) {
+    setTextInteractionFlags(Qt::TextEditorInteraction);
+    setFocus(Qt::MouseFocusReason);
+    setSelected(true);
+    setCursor(Qt::IBeamCursor);
+  }
 }
