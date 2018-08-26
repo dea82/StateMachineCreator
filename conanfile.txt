@@ -1,6 +1,8 @@
 [requires]
 cppzmq/4.2.2@bincrafters/stable
 Qt/5.11.1@bincrafters/stable
+gtest/1.8.0@bincrafters/stable
+protobuf/3.6.1@bincrafters/stable
 
 [generators]
 cmake
