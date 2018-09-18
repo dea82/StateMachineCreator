@@ -2,6 +2,7 @@
   <dictionary name="andreas">
     <words>
       <w>shellcheck</w>
+      <w>statemachinecreator</w>
     </words>
   </dictionary>
 </component>

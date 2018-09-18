@@ -1,13 +1,20 @@
-# Requires environment variable CMAKE_PREFIX_PATH
-# set to Qt lib, ~/Qt/5.7/gcc_64)
+set(TARGET_NAME gui)
+
+# Still necessary as conan does not generate Qt target correctly
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Svg REQUIRED)
-#message(STATUS "Qt version: ${Qt5Widgets_VERSION}")
-#find_package(ZeroMQ REQUIRED)
 
-file(GLOB SRC_FILES *.qrc *.cpp)
-add_executable(creator ${SRC_FILES})
-#target_include_directories(creator PUBLIC ${CONAN_INCLUDE_DIRS})
-target_link_libraries(creator Qt5::Core Qt5::Svg)
+# Qt stuff
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
-add_subdirectory(test)
+# Generated moc code
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+
+file(GLOB_RECURSE SRC_FILES src/*.cpp resources/*.qrc)
+add_library(${TARGET_NAME} ${SRC_FILES})
+target_link_libraries(${TARGET_NAME} Qt5::Core Qt5::Svg)
+target_include_directories(${TARGET_NAME}  PUBLIC include)
+target_include_directories(${TARGET_NAME} PUBLIC src)

@@ -1,7 +1,6 @@
-#find_package(ZeroMQ REQUIRED)
+set(TARGET_NAME server)
 
-set(CMAKE_INCLUDE_CURRENT_DIR)
-set(SRC_FILES main.cpp)
-add_executable(server ${SRC_FILES})
-target_include_directories(server PUBLIC ${CONAN_INCLUDE_DIRS})
-target_link_libraries(server CONAN_PKG::cppzmq )
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
+add_executable(${TARGET_NAME} ${SRC_FILES})
+target_include_directories(${TARGET_NAME} PUBLIC include)
+target_link_libraries(${TARGET_NAME} PRIVATE CONAN_PKG::cppzmq)
