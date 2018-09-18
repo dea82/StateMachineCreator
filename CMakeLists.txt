@@ -29,5 +29,5 @@ iwyu_check(OFF)
 # As moc files are generated in the binary dir, tell CMake
 # to always look for includes there:
 #set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
+set(CMAKE_VERBOSE_MAKEFILE ON)
 add_subdirectory(src)
