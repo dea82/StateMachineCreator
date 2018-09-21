@@ -12,23 +12,32 @@ linux:
 matrix:
   include:
   - os: linux
-    sudo: required
     language: python
     python: '3.6'
     services: *1
-    env: DOCKER_IMAGE=lasote/conangcc72 CONAN_PROFILE=linux-gcc72-amd64-release
+    env: DOCKER_IMAGE=lasote/conangcc72 CONAN_PROFILE=linux-gcc72-amd64-debug COVERAGE=TRUE BUILD_TYPE=Debug
   - os: linux
-    sudo: required
     language: python
     python: '3.6'
     services: *1
-    env: DOCKER_IMAGE=lasote/conanclang60 CONAN_PROFILE=linux-clang60-amd64-release
+    env: DOCKER_IMAGE=lasote/conanclang60 CONAN_PROFILE=linux-clang60-amd64-release COVERAGE=FALSE BUILD_TYPE=Release
 before_install:
 - echo $gpg_password | gpg --passphrase-fd 0 conan-repo.cfg.gpg
 - docker pull $DOCKER_IMAGE
-- docker run -itd -v $TRAVIS_BUILD_DIR:/repo --name build_container $DOCKER_IMAGE
+- docker run -itd -e CODECOV_TOKEN -v $TRAVIS_BUILD_DIR:/repo --name build_container $DOCKER_IMAGE
+- |
+  if [ $COVERAGE == "TRUE" ]; then
+    docker exec build_container sudo apt-get update
+    docker exec build_container sudo apt-get install -y --no-install-recommends lcov curl
+  fi
 script:
 - docker exec build_container /repo/build-tools/build_conan_dependencies.py -c https://github.com/dea82/conan-config.git
   -pr=$CONAN_PROFILE -ar=/repo/conan-repo.cfg /repo
-- docker exec build_container cmake -H/repo -B/repo/build/$CONAN_PROFILE
+- docker exec build_container cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOVERAGE=$COVERAGE -H/repo -B/repo/build/$CONAN_PROFILE
 - docker exec build_container cmake --build /repo/build/$CONAN_PROFILE
+
+after_success:
+- |
+  if  [ $COVERAGE == "TRUE" ]; then
+    docker exec build_container /bin/bash -c "/repo/build-tools/upload_codecov.py -b /repo/build/$CONAN_PROFILE -t coverage"
+  fi
