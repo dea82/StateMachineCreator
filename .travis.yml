@@ -11,16 +11,8 @@ linux:
   - docker
 matrix:
   include:
-  - os: linux
-    language: python
-    python: '3.6'
-    services: *1
-    env: DOCKER_IMAGE=lasote/conangcc72 CONAN_PROFILE=linux-gcc72-amd64-debug COVERAGE=TRUE BUILD_TYPE=Debug
-  - os: linux
-    language: python
-    python: '3.6'
-    services: *1
-    env: DOCKER_IMAGE=lasote/conanclang60 CONAN_PROFILE=linux-clang60-amd64-release COVERAGE=FALSE BUILD_TYPE=Release
+  - env: DOCKER_IMAGE=lasote/conangcc72 CONAN_PROFILE=linux-gcc72-amd64-debug COVERAGE=TRUE BUILD_TYPE=Debug
+  - env: DOCKER_IMAGE=lasote/conanclang60 CONAN_PROFILE=linux-clang60-amd64-release COVERAGE=FALSE BUILD_TYPE=Release
 before_install:
 - echo $gpg_password | gpg --passphrase-fd 0 conan-repo.cfg.gpg
 - docker pull $DOCKER_IMAGE
