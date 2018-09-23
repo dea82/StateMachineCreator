@@ -38,6 +38,7 @@ build/
 .idea/workspace.xml
 cmake-build-*
 conan-repo.cfg
+conan-install.json
 
 # Python
 *.pyc
