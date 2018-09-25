@@ -6,6 +6,7 @@ import json
 import conan.conanrepo.conanrepo as conanrepo
 from subprocess import call
 
+
 def decorated_print(string):
     print("*" * 60)
     print('*   ' + string)
@@ -35,7 +36,9 @@ def main():
     args = parser.parse_args()
 
     upload_requested = args.artifact_repo
-
+    login_credentials = None
+    if upload_requested:
+        login_credentials = get_login_credentials(args.artifact_repo, 'public-conan')
     decorated_print('Downloading conan config')
     call(["conan", "config", "install", args.config])
 
@@ -58,7 +61,7 @@ def main():
             if packages_to_upload:
                 decorated_print('Preparing upload - login to repo')
                 if not logged_in:
-                    login(get_login_credentials(args.artifact_repo, 'public-conan'), 'private-repo')
+                    login(login_credentials, 'private-repo')
                     logged_in = True
                 decorated_print('Uploading to private repository for profile: ' + profile)
                 for p in packages_to_upload:
