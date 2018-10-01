@@ -22,6 +22,8 @@
 
 #include <gtest/gtest.h>
 
+#include <memory>
+
 #include <QApplication>
 #include <QAction>
 #include <QtTest>

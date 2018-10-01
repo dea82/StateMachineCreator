@@ -17,9 +17,10 @@ before_install:
 - echo $gpg_password | gpg --passphrase-fd 0 conan-repo.cfg.gpg
 - docker pull $DOCKER_IMAGE
 - docker run -itd -e CODECOV_TOKEN -v $TRAVIS_BUILD_DIR:/repo --name build_container $DOCKER_IMAGE
+- docker exec build_container sudo apt-get update
+- docker exec build_container sudo apt-get install -y --no-install-recommends xvfb
 - |
   if [ $COVERAGE == "TRUE" ]; then
-    docker exec build_container sudo apt-get update
     docker exec build_container sudo apt-get install -y --no-install-recommends lcov curl
   fi
 script:
@@ -27,9 +28,10 @@ script:
   -pr=$CONAN_PROFILE -ar=/repo/conan-repo.cfg /repo
 - docker exec build_container cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOVERAGE=$COVERAGE -H/repo -B/repo/build/$CONAN_PROFILE
 - docker exec build_container cmake --build /repo/build/$CONAN_PROFILE
+- docker exec build_container xvfb-run /repo/build/$CONAN_PROFILE/bin/gui_test
 
 after_success:
 - |
   if  [ $COVERAGE == "TRUE" ]; then
-    docker exec build_container /bin/bash -c "/repo/build-tools/upload_codecov.py -b /repo/build/$CONAN_PROFILE -t coverage"
+    docker exec build_container /bin/bash -c "/repo/build-tools/upload_codecov.py -b /repo/build/$CONAN_PROFILE -t gui_test"
   fi

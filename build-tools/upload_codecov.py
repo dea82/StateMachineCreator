@@ -11,7 +11,7 @@ def main():
     args = parser.parse_args()
 
     os.chdir(args.build_path)
-    os.system("cmake --build " + args.build_path + " -- " + args.target)
+    os.system("xvfb-run cmake --build " + args.build_path + " -- " + args.target)
     os.system("lcov --directory . --capture --output-file coverage.info")
     os.system("lcov --remove coverage.info '/usr/*' --output-file coverage.info")
     os.system("lcov --list coverage.info")

@@ -7,12 +7,13 @@ project(StateMachineCreator CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 #include(CTest)
+set(CTEST_OUTPUT_ON_FAILURE ON)
 enable_testing()
 
 # Compiler settings
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 if (${COVERAGE})
     include(CodeCoverage)
