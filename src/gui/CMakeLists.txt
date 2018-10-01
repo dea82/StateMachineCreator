@@ -13,8 +13,25 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp resources/*.qrc)
-add_library(${TARGET_NAME} ${SRC_FILES})
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp resources/*.qrc)
+file(GLOB_RECURSE UI_FILES src/*.ui)
+
+
+add_library(${TARGET_NAME} ${SRC_FILES} ${UI_FILES})
+
+# Fix to get code completion in IDE for generated ui files
+set_target_properties(${TARGET_NAME} PROPERTIES AUTOGEN_BUILD_DIR "${CMAKE_SOURCE_DIR}/generated")
+
 target_link_libraries(${TARGET_NAME} Qt5::Core Qt5::Svg)
 target_include_directories(${TARGET_NAME}  PUBLIC include)
-target_include_directories(${TARGET_NAME} PUBLIC src)
+target_include_directories(${TARGET_NAME} PRIVATE src ${CMAKE_SOURCE_DIR}/generated/include)
+
+include(GoogleTest)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Test REQUIRED)
+file(GLOB_RECURSE TEST_SRC test/*.cpp)
+add_executable(${TARGET_NAME}_test ${TEST_SRC})
+gtest_discover_tests(${TARGET_NAME}_test)
+target_link_libraries(${TARGET_NAME}_test ${TARGET_NAME} CONAN_PKG::gtest Qt5::Core Qt5::Test)
+target_include_directories(${TARGET_NAME}_test PRIVATE test/include src)
+
