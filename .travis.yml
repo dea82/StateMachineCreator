@@ -27,7 +27,7 @@ script:
 - docker exec build_container /repo/build-tools/build_conan_dependencies.py -c https://github.com/dea82/conan-config.git
   -pr=$CONAN_PROFILE -ar=/repo/conan-repo.cfg /repo
 - docker exec build_container cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOVERAGE=$COVERAGE -H/repo -B/repo/build/$CONAN_PROFILE
-- docker exec build_container cmake --build /repo/build/$CONAN_PROFILE
+- docker exec build_container cmake --build /repo/build/$CONAN_PROFILE -- -j4
 # Run test. CI does not have any X-server - use xvfb.
 - docker exec build_container xvfb-run cmake --build /repo/build/$CONAN_PROFILE --target test -- ARGS="--output-on-failure"
 
