@@ -6,8 +6,6 @@ project(StateMachineCreator CXX)
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-#include(CTest)
-set(CTEST_OUTPUT_ON_FAILURE ON)
 enable_testing()
 
 # Compiler settings
