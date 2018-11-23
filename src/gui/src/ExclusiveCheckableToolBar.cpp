@@ -23,34 +23,20 @@ THE SOFTWARE.
 namespace statemachinecreator::gui {
 
 ExclusiveCheckableToolBar::ExclusiveCheckableToolBar(QWidget* parent)
-    : tool_bar_(std::make_unique<QToolBar>(parent)),
-      action_group_(std::make_unique<QActionGroup>(this)),
-      current_checked_action_(
-          nullptr) {
-  tool_bar_->setMovable(false);
-  tool_bar_->setFloatable(false);
-  QObject::connect(action_group_.get(), &QActionGroup::triggered, this, &ExclusiveCheckableToolBar::ActionTriggered);
-}
-
-void ExclusiveCheckableToolBar::AddAction(QAction* action) noexcept {
-  // TODO: Remove this and create a InsertAction subclass which is created by appropriate factory pattern.
-  action->setCheckable(true);
-  tool_bar_->addAction(action);
-  action_group_->addAction(action);
+    : QToolBar(parent),
+      last_checked_action_(nullptr) {
+  connect(this, &QToolBar::actionTriggered, this, &ExclusiveCheckableToolBar::ActionTriggered);
 }
 
 void ExclusiveCheckableToolBar::ActionTriggered(QAction* action) noexcept {
-  if (action == current_checked_action_) {
-    UncheckCurrentAction();
-  } else {
-    current_checked_action_ = action;
-  }
+  UncheckCurrentAction();
+  last_checked_action_ = action;
 }
 
 void ExclusiveCheckableToolBar::UncheckCurrentAction() noexcept {
-  if (current_checked_action_) {
-    current_checked_action_->setChecked(false);
-    current_checked_action_ = nullptr;
+  if (last_checked_action_) {
+    last_checked_action_->setChecked(false);
+    last_checked_action_ = nullptr;
   }
 }
 

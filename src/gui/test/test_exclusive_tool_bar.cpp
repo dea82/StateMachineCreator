@@ -19,21 +19,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+#include <memory>
 
 #include <gtest/gtest.h>
 
-#include <memory>
-
-#include <QApplication>
 #include <QAction>
+#include <QApplication>
 #include <QtTest>
 
 #include "ExclusiveCheckableToolBar.hpp"
+#include "Factory.hpp"
 
 namespace statemachinecreator::gui::test {
 
 struct TestExclusiveToolBar : public ::testing::Test {
-  TestExclusiveToolBar() : toolbar_(std::make_unique<ExclusiveCheckableToolBar>()) {}
+  TestExclusiveToolBar() : toolbar_{ExclusiveCheckableToolBar(nullptr)},
+                           actions_{factory::CreateInsertAction(QIcon(), "action0", &toolbar_),
+                                    factory::CreateInsertAction(QIcon(), "action1", &toolbar_)} {
+    toolbar_.addActions(actions_);
+  }
 
   static void SetUpTestCase() {
     int argc = 0;
@@ -41,11 +45,11 @@ struct TestExclusiveToolBar : public ::testing::Test {
   }
 
   static void TearDownTestCase() {
-    application_ = nullptr;
+    application_.reset(nullptr);
   }
 
-  std::tuple<bool, QWidget*> getWidgetForAction(const QAction& action, const char* widget_type) {
-    for (const auto action_widget : action.associatedWidgets()) {
+  static std::tuple<bool, QWidget*> getWidgetForAction(QAction* action, const char* widget_type) {
+    for (const auto action_widget : action->associatedWidgets()) {
       if (!strncmp(action_widget->metaObject()->className(), widget_type, strlen(widget_type))) {
         return {true, action_widget};
       }
@@ -53,35 +57,58 @@ struct TestExclusiveToolBar : public ::testing::Test {
     return {false, nullptr};
   }
 
-  void pressActionButton(const QAction& action) {
-    auto[match, tool_bar_button_widget] = getWidgetForAction(action, "QToolButton");
+  static void pressActionButton(QAction* action) {
+    auto[match, tool_bar_button_widget] = getWidgetForAction(action, widget_type_for_action_);
     ASSERT_TRUE(match);
     QTest::mouseClick(tool_bar_button_widget, Qt::LeftButton);
   }
 
   static std::unique_ptr<QApplication> application_;
-
-  std::unique_ptr<ExclusiveCheckableToolBar> toolbar_;
+  ExclusiveCheckableToolBar toolbar_;
+  QList<QAction*> actions_;
+  static constexpr const char* widget_type_for_action_{"QToolButton"};
 };
 
 std::unique_ptr<QApplication> TestExclusiveToolBar::application_ = nullptr;
 
-TEST_F(TestExclusiveToolBar, checkable) {
-  QAction action1("action1");
-  QAction action2("action2");
-  toolbar_->AddAction(&action1);
-  toolbar_->AddAction(&action2);
-  EXPECT_FALSE(action1.isChecked());
-  EXPECT_FALSE(action2.isChecked());
-  pressActionButton(action1);
-  EXPECT_TRUE(action1.isChecked());
-  EXPECT_FALSE(action2.isChecked());
-  pressActionButton(action2);
-  EXPECT_FALSE(action1.isChecked());
-  EXPECT_TRUE(action2.isChecked());
-  pressActionButton(action2);
-  EXPECT_FALSE(action1.isChecked());
-  EXPECT_FALSE(action2.isChecked());
+TEST_F(TestExclusiveToolBar, NoButtonCheckedWhenConstructed) {
+  EXPECT_FALSE(actions_[0]->isChecked());
+  EXPECT_FALSE(actions_[1]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, ActionIsCheckedWhenPressingButton) {
+  pressActionButton(actions_[0]);
+  EXPECT_TRUE(actions_[0]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, UncheckCurrentActionInterfaceWithActiveAction) {
+  pressActionButton(actions_[0]);
+  toolbar_.UncheckCurrentAction();
+  EXPECT_FALSE(actions_[0]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, UncheckCurrentActionInterfaceWithoutActiveAction) {
+  toolbar_.UncheckCurrentAction();
+  EXPECT_FALSE(actions_[0]->isChecked());
+  EXPECT_FALSE(actions_[1]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, ActionIsUncheckedWhenPressingOtherButton) {
+  pressActionButton(actions_[0]);
+  pressActionButton(actions_[1]);
+  EXPECT_FALSE(actions_[0]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, ActionIsUncheckedWhenPressingActiveButton) {
+  pressActionButton(actions_[0]);
+  pressActionButton(actions_[0]);
+  EXPECT_FALSE(actions_[0]->isChecked());
+}
+
+TEST_F(TestExclusiveToolBar, ActionIsSwitchedWhenPressingOtherButton) {
+  pressActionButton(actions_[0]);
+  pressActionButton(actions_[1]);
+  EXPECT_TRUE(actions_[1]->isChecked());
 }
 
 }  // namespace statemachinecreator::gui::test

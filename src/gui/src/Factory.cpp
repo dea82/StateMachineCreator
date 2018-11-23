@@ -21,14 +21,16 @@
 // THE SOFTWARE.
 
 #include "gui/Factory.hpp"
+#include "Factory.hpp"
 
+#include <QAction>
 #include <QDir>
 
 #include "MainWindow.hpp"
 
 // Needs to be declared in global scope
 void InitResources() {
-    Q_INIT_RESOURCE(icons);
+  Q_INIT_RESOURCE(icons);
 }
 
 namespace statemachinecreator::gui::factory {
@@ -38,7 +40,22 @@ void InitResources() {
 }
 
 QMainWindow* createMainWindow() {
-  return new MainWindow();
+  auto main_window = new MainWindow();
+  main_window->addToolBar(Qt::LeftToolBarArea, CreateInsertToolBar(main_window));
+  return main_window;
+}
+
+QToolBar* CreateInsertToolBar(QWidget* parent) {
+  auto tool_bar = new ExclusiveCheckableToolBar(parent);
+  tool_bar->addAction(new QAction("State", tool_bar));
+  tool_bar->setFloatable(false);
+  return tool_bar;
+}
+
+QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent) {
+  auto action = new QAction(icon, text, parent);
+  action->setCheckable(true);
+  return action;
 }
 
 }  // namespace statemachinecreator::gui::factory

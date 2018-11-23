@@ -20,26 +20,15 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <memory>
+#include <QAction>
 
-#include <QToolBar>
+#include "ExclusiveCheckableToolBar.hpp"
 
-class QAction;
+class QWidget;
 
-namespace statemachinecreator::gui {
+namespace statemachinecreator::gui::factory {
 
-class ExclusiveCheckableToolBar : public QToolBar {
- Q_OBJECT
+QToolBar* CreateInsertToolBar(QWidget* parent);
+QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent = nullptr);
 
- public:
-  explicit ExclusiveCheckableToolBar(QWidget* parent);
-
-  void UncheckCurrentAction() noexcept;
-
- private:
-  void ActionTriggered(QAction* action) noexcept;
-
-  QAction * last_checked_action_;
-};
-
-}  // namespace statemachinecreator::gui
+}
