@@ -2,7 +2,9 @@ coverage:
   range: 50..80
   round: nearest
   precision: 2
+fixes:
+  - "src/::"
 ignore:
-  - "src/gui/test"
-  - "src/model/test"
-  - "src/test-helpers"
+  - "gui/test"
+  - "model/test"
+  - "test-helpers"
