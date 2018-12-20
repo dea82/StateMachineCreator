@@ -23,5 +23,5 @@ THE SOFTWARE.
 #include "memory.h"
 
 namespace statemachinecreator::model {
-  FWD_SMART_P(IState);
+  FWD_SMART_P(IState)
 }
