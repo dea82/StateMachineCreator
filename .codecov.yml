@@ -1,0 +1,8 @@
+coverage:
+  range: 50..80
+  round: nearest
+  precision: 2
+ignore:
+  - "src/gui/test"
+  - "src/model/test"
+  - "src/test-helpers"

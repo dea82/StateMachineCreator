@@ -5,6 +5,7 @@ import os
 
 
 def main():
+    SRC_ROOT_DIR = '/repo'
     parser = argparse.ArgumentParser(description="Upload coverage report to codecov.io.")
     parser.add_argument('-b', '--build_path', action='store', required=True, help='Build path')
     parser.add_argument('-t', '--target', action='store', required=True, help="Target to generate coverage files.")
