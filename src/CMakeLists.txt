@@ -1,4 +1,6 @@
+add_subdirectory(common)
 add_subdirectory(creator)
 add_subdirectory(gui)
 add_subdirectory(model)
 add_subdirectory(server)
+add_subdirectory(test-helpers)

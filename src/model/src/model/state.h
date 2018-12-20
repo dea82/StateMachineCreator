@@ -20,12 +20,26 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include <string>
 
-namespace statemachinecreator::gui::factory {
+#include "model/i_state.h"
+#include "model/element.h"
 
-void InitResources();
 
-QMainWindow* CreateMainWindow();
+namespace statemachinecreator::model {
+class State : public Element<IState> {
+ public:
+  explicit State(std::string name) : name_{std::move(name)} {}
+  ~State() override = default;
 
-}  // namespace statemachinecreator::gui::factory
+  IStateUP Clone() const override;
+
+  std::string Name() const override;
+
+  void Name(std::string name) override;
+
+  void Accept(IElementVisitor* visitor) override;
+ private:
+  std::string name_;
+};
+}  // namespace statemachinecreator::model

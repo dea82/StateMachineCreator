@@ -18,14 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
+#include "model/factory.h"
 
-#include <string>
-
-#include "model/IState_fwd.hpp"
+#include "model/state.h"
 
 namespace statemachinecreator::model::factory {
 
-IStateSP createState(const std::string &name);
+IStateUP CreateState(std::string name) {
+  return std::make_unique<State>(std::move(name));
+}
 
 }

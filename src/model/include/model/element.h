@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2018-12-02 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,12 +20,17 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include "model/Observable.hpp"
+#include "model/ielement_visitor.h"
 
-namespace statemachinecreator::gui::factory {
+namespace statemachinecreator::model {
 
-void InitResources();
+template<typename IObservableT>
+class Element : public IObservableT {
+ public:
+  virtual void Accept(IElementVisitor* element_visitor) override {
+    element_visitor->Visit(this);
+  }
+};
 
-QMainWindow* CreateMainWindow();
-
-}  // namespace statemachinecreator::gui::factory
+}

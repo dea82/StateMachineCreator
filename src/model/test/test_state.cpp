@@ -1,27 +1,25 @@
 #include <gtest/gtest.h>
 
-#include "model/Factory.hpp"
-#include "model/IState.hpp"
+#include "model/factory.h"
+#include "model/i_state.h"
 
 namespace statemachinecreator::model {
 struct TestState : public ::testing::Test {
-  TestState() : state_(factory::createState("initial")) {}
-  std::shared_ptr<IState> state_;
-
+  TestState() : state(factory::CreateState("initial")) {}
+  IStateUP state;
 };
 
-TEST_F(TestState, constructor_name) {
-  EXPECT_EQ(state_->name(), "initial");
+TEST_F(TestState, constructor_name) {  // NOLINT(cert-err58-cpp)
+  EXPECT_EQ(state->Name(), "initial");
 }
 
-TEST_F(TestState, clone) {
-  IState* clone_state = state_->clone();
-  EXPECT_EQ(clone_state->name(), "initial");
+TEST_F(TestState, clone) {  // NOLINT(cert-err58-cpp)
+  IStateUP clone_state = state->Clone();
+  EXPECT_EQ(clone_state->Name(), "initial");
 }
 
-TEST_F(TestState, set_name) {
-  EXPECT_EQ(state_->name(), "initial");
-  state_->name("change");
-  EXPECT_EQ(state_->name(), "change");
+TEST_F(TestState, set_name) {  // NOLINT(cert-err58-cpp)
+  state->Name("change");
+  EXPECT_EQ(state->Name(), "change");
 }
 }  // namespace statemachinecreator::model

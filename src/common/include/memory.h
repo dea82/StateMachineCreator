@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2018-12-19 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,12 +20,9 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include <memory>
 
-namespace statemachinecreator::gui::factory {
-
-void InitResources();
-
-QMainWindow* CreateMainWindow();
-
-}  // namespace statemachinecreator::gui::factory
+#define FWD_SMART_P(name) \
+class name; \
+using name ## UP = std::unique_ptr<name>; \
+using name ## SP = std::unique_ptr<name>;

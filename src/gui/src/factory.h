@@ -20,25 +20,21 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <string>
+#include <memory>
 
-#include "model/IState.hpp"
-#include "model/Observable.hpp"
+#include "element_graphics_item_builder.h"
+class QAction;
+class QGraphicsScene;
+class QIcon;
+class QObject;
+class QString;
+class QToolBar;
+class QWidget;
 
-namespace statemachinecreator::model {
-class State : public Observable<IState> {
- public:
-  explicit State(std::string name) : name_{std::move(name)} {}
-  ~State() override = default;
 
-  IState* clone() const override {
-    return new State(name_);
-  }
+namespace statemachinecreator::gui::factory {
 
-  std::string name() const override;
+QToolBar* CreateInsertToolBar(QWidget* parent);
+QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent = nullptr);
 
-  void name(const std::string &name) override;
- private:
-  std::string name_;
-};
-}  // namespace statemachinecreator::model
+}

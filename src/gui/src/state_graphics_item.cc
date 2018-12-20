@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2018-12-06 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,14 +18,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
+#include "state_graphics_item.h"
 
-namespace statemachinecreator::model {
+#include <QPainter>
 
-template<typename T>
-class IClonable {
- public:
-  virtual ~IClonable() = default;
-  virtual T* clone() const = 0;
-};
-}  // namespace statemachinecreator::model
+namespace statemachinecreator::gui {
+
+QRectF StateGraphicsItem::boundingRect() const {
+  return QRectF(-30, -30, 60, 60);
+}
+
+void StateGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+  painter->drawRoundedRect(-30, -30, 60, 60, 5, 5);
+}
+
+}

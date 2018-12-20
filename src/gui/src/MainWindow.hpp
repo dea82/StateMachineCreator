@@ -23,36 +23,26 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QString>
 
-#include "OutlineGraphicsItem.hpp"
+#include <memory>
 
-class QGraphicsView;
-class QStatusBar;
 class QWidget;
+
+namespace Ui {
+class MainWindow;
+}
 
 namespace statemachinecreator::gui {
 
-class InsertElementToolBar;
-class WorkAreaScene;
-
 class MainWindow : public QMainWindow {
  Q_OBJECT
-
  public:
-  MainWindow(QWidget* parent = nullptr);
-  ~MainWindow() override = default;
-
- public slots:
-  void InsertElementButtonPressed(const OutlineGraphicsItem::ItemType& element, bool checked);
-  void InsertModeEnded();
-
+  explicit MainWindow(QWidget* parent = nullptr);
+  ~MainWindow() override;
+  Q_SIGNAL void saveTriggered();
+  Q_SIGNAL void loadTriggered();
  private:
-  void CreateInsertToolBar();
-  InsertElementToolBar* insertToolBar_;
-  QStatusBar* statusBar_;
-  QGraphicsView* graphicsView_;
-  WorkAreaScene* activeScene_;
+  std::unique_ptr<Ui::MainWindow> ui_;
 };
 
 }  // namespace statemachinecreator::gui

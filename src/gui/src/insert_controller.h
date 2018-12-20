@@ -18,16 +18,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "model/State.hpp"
+#pragma once
+#include <memory>
 
-namespace statemachinecreator::model {
+#include <QObject>
 
-std::string State::name() const {
-  return name_;
-}
+#include "iinsert_controller.h"
 
-void State::name(const std::string &name) {
-  name_ = name;
-}
+class QGraphicsItem;
+
+namespace statemachinecreator::gui {
+
+class InsertController : public QObject, public IInsertController {
+ public:
+  explicit InsertController() : temporary_element_{nullptr},
+                                element_graphics_item_{nullptr},
+                                observed_scene_{nullptr} {}
+
+  bool IsInserting() override {
+    return temporary_element_ != nullptr;
+  }
+  void StartInsert(QGraphicsScene* scene, std::unique_ptr<model::IElement> element) override;
+
+  void FinishInsert() override;
+
+  void AbortInsert() override;
+
+  bool eventFilter(QObject* object, QEvent* event) override;
+
+ private:
+  //TODO: This should probably be moved to a "SceneController" which can return a pointer to the created element.
+  void CreateElementGraphics();
+
+  std::unique_ptr<model::IElement> temporary_element_;
+  QGraphicsItem* element_graphics_item_;
+  QGraphicsScene* observed_scene_;
+
+};
 
 }

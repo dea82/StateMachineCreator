@@ -1,8 +1,9 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>icons/state_black.svg</file>
-    <file>icons/state_blue.svg</file>
-    <file>icons/entrypoint_black.svg</file>
-    <file>icons/entrypoint_blue.svg</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>icons/state_black.svg</file>
+        <file>icons/state_blue.svg</file>
+        <file>icons/entrypoint_black.svg</file>
+        <file>icons/entrypoint_blue.svg</file>
+        <file>icons/open.svg</file>
+    </qresource>
 </RCC>

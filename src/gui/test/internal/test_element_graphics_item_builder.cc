@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2018-12-06 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,17 +18,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
+#include <memory>
 
-#include <QAction>
+#include <gtest/gtest.h>
 
-#include "ExclusiveCheckableToolBar.hpp"
+#include "model/factory.h"
+#include "model/i_state.h"
+#include "element_graphics_item_builder.h"
 
-class QWidget;
+using namespace ::testing;
 
-namespace statemachinecreator::gui::factory {
+namespace statemachinecreator::gui::test {
 
-QToolBar* CreateInsertToolBar(QWidget* parent);
-QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent = nullptr);
+struct TestElementGraphicsItemBuilder : public Test {
+  TestElementGraphicsItemBuilder() : state{model::factory::CreateState("default")}, builder{} {}
+  model::IStateUP state;
+  ElementGraphicsItemBuilder builder;
+};
+
+TEST_F(TestElementGraphicsItemBuilder, StateGraphicsItemReturned) {
+  auto state_graphics_item = builder.Build(state.get());
+  EXPECT_NE(state_graphics_item, nullptr);
+}
 
 }

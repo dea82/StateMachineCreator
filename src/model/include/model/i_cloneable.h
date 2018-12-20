@@ -20,12 +20,14 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include <memory>
 
-namespace statemachinecreator::gui::factory {
+namespace statemachinecreator::model {
 
-void InitResources();
-
-QMainWindow* CreateMainWindow();
-
-}  // namespace statemachinecreator::gui::factory
+template<typename T>
+class ICloneable {
+ public:
+  virtual ~ICloneable() = default;
+  virtual std::unique_ptr<T> Clone() const = 0;
+};
+}  // namespace statemachinecreator::model

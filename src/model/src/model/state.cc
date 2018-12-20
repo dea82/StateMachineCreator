@@ -18,19 +18,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
-
-#include <string>
-
-#include "model/IClonable.hpp"
-#include "model/IObservable.hpp"
+#include "model/state.h"
+#include "model/ielement_visitor.h"
 
 namespace statemachinecreator::model {
 
-class IState : public IObservable, public IClonable<IState> {
- public:
-  ~IState() override = default;
-  virtual std::string name() const = 0;
-  virtual void name(const std::string &name) = 0;
-};
-}  // namespace statemachinecreator::model
+std::string State::Name() const {
+  return name_;
+}
+
+void State::Name(std::string name) {
+  name_ = std::move(name);
+}
+
+IStateUP State::Clone() const {
+  return std::make_unique<State>(name_);
+}
+
+void State::Accept(IElementVisitor* visitor) {
+  visitor->Visit(this);
+}
+
+}

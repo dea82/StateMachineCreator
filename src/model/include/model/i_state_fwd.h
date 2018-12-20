@@ -20,12 +20,8 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include "memory.h"
 
-namespace statemachinecreator::gui::factory {
-
-void InitResources();
-
-QMainWindow* CreateMainWindow();
-
-}  // namespace statemachinecreator::gui::factory
+namespace statemachinecreator::model {
+  FWD_SMART_P(IState);
+}

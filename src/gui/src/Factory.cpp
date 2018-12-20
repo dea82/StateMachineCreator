@@ -21,11 +21,16 @@
 // THE SOFTWARE.
 
 #include "gui/Factory.hpp"
-#include "Factory.hpp"
+#include "model/factory.h"
+#include "model/i_state.h"
+#include "factory.h"
 
 #include <QAction>
 #include <QDir>
+#include <QGraphicsView>
 
+#include "exclusive_checkable_tool_bar.h"
+#include "insert_controller.h"
 #include "MainWindow.hpp"
 
 // Needs to be declared in global scope
@@ -39,15 +44,27 @@ void InitResources() {
   ::InitResources();
 }
 
-QMainWindow* createMainWindow() {
+QMainWindow* CreateMainWindow() {
   auto main_window = new MainWindow();
-  main_window->addToolBar(Qt::LeftToolBarArea, CreateInsertToolBar(main_window));
+  auto toolbar = CreateInsertToolBar(main_window);
+  main_window->addToolBar(Qt::LeftToolBarArea, toolbar);
+  auto action = new QAction("State", toolbar);
+  toolbar->addAction(action);
+  auto graphics_view = new QGraphicsView();
+  graphics_view->viewport()->setMouseTracking(true);
+  auto graphics_scene = new QGraphicsScene(-300, -300, 600, 600);
+  graphics_view->setScene(graphics_scene);
+  auto insert_controller = new InsertController();
+  QObject::connect(action, &QAction::triggered, [insert_controller, graphics_scene] (bool triggered) {
+    insert_controller->StartInsert(graphics_scene, model::factory::CreateState("Bar"));
+  });
+  main_window->setCentralWidget(graphics_view);
   return main_window;
 }
 
 QToolBar* CreateInsertToolBar(QWidget* parent) {
   auto tool_bar = new ExclusiveCheckableToolBar(parent);
-  tool_bar->addAction(new QAction("State", tool_bar));
+  //tool_bar->addAction(new QAction("State", tool_bar));
   tool_bar->setFloatable(false);
   return tool_bar;
 }

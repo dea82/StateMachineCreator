@@ -1,10 +1,10 @@
 include(GoogleTest)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-file(GLOB_RECURSE SRC_FILES "src/model/*.cpp")
+file(GLOB_RECURSE SRC_FILES "src/model/*.cpp" "src/model/*.cc")
 
 add_library(model ${SRC_FILES})
-target_link_libraries(model CONAN_PKG::tinyxml)
+target_link_libraries(model common CONAN_PKG::tinyxml)
 target_include_directories(model PUBLIC include)
 target_include_directories(model PRIVATE src)
 

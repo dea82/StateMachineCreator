@@ -20,12 +20,21 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+#include <memory>
 
-namespace statemachinecreator::gui::factory {
+#include "model/ielement_fwd.h"
 
-void InitResources();
+class QGraphicsScene;
 
-QMainWindow* CreateMainWindow();
+namespace statemachinecreator::gui {
 
-}  // namespace statemachinecreator::gui::factory
+class IInsertController {
+ public:
+  virtual ~IInsertController() = default;
+  virtual bool IsInserting() = 0;
+  virtual void StartInsert(QGraphicsScene * scene, model::IElementUP state) = 0;
+  virtual void AbortInsert() = 0;
+  virtual void FinishInsert() = 0;
+};
+
+}

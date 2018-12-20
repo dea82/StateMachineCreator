@@ -24,28 +24,20 @@
 #include <gtest/gtest.h>
 
 #include <QAction>
-#include <QApplication>
 #include <QtTest>
 
-#include "ExclusiveCheckableToolBar.hpp"
-#include "Factory.hpp"
+#include "exclusive_checkable_tool_bar.h"
+#include "factory.h"
+
+using namespace ::testing;
 
 namespace statemachinecreator::gui::test {
 
-struct TestExclusiveToolBar : public ::testing::Test {
-  TestExclusiveToolBar() : toolbar_{ExclusiveCheckableToolBar(nullptr)},
-                           actions_{factory::CreateInsertAction(QIcon(), "action0", &toolbar_),
-                                    factory::CreateInsertAction(QIcon(), "action1", &toolbar_)} {
-    toolbar_.addActions(actions_);
-  }
-
-  static void SetUpTestCase() {
-    int argc = 0;
-    application_ = std::make_unique<QApplication>(argc, nullptr);
-  }
-
-  static void TearDownTestCase() {
-    application_.reset(nullptr);
+ struct TestExclusiveToolBar : public Test {
+  TestExclusiveToolBar() : toolbar{nullptr},
+                           actions{factory::CreateInsertAction(QIcon(), "action0", &toolbar),
+                                    factory::CreateInsertAction(QIcon(), "action1", &toolbar)} {
+    toolbar.addActions(actions);
   }
 
   static std::tuple<bool, QWidget*> getWidgetForAction(QAction* action, const char* widget_type) {
@@ -58,57 +50,54 @@ struct TestExclusiveToolBar : public ::testing::Test {
   }
 
   static void pressActionButton(QAction* action) {
-    auto[match, tool_bar_button_widget] = getWidgetForAction(action, widget_type_for_action_);
+    auto[match, tool_bar_button_widget] = getWidgetForAction(action, widget_type_for_action);
     ASSERT_TRUE(match);
     QTest::mouseClick(tool_bar_button_widget, Qt::LeftButton);
   }
 
-  static std::unique_ptr<QApplication> application_;
-  ExclusiveCheckableToolBar toolbar_;
-  QList<QAction*> actions_;
-  static constexpr const char* widget_type_for_action_{"QToolButton"};
+  ExclusiveCheckableToolBar toolbar;
+  QList<QAction*> actions;
+  static constexpr const char* widget_type_for_action{"QToolButton"};
 };
 
-std::unique_ptr<QApplication> TestExclusiveToolBar::application_ = nullptr;
-
 TEST_F(TestExclusiveToolBar, NoButtonCheckedWhenConstructed) {
-  EXPECT_FALSE(actions_[0]->isChecked());
-  EXPECT_FALSE(actions_[1]->isChecked());
+  EXPECT_FALSE(actions[0]->isChecked());
+  EXPECT_FALSE(actions[1]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, ActionIsCheckedWhenPressingButton) {
-  pressActionButton(actions_[0]);
-  EXPECT_TRUE(actions_[0]->isChecked());
+  pressActionButton(actions[0]);
+  EXPECT_TRUE(actions[0]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, UncheckCurrentActionInterfaceWithActiveAction) {
-  pressActionButton(actions_[0]);
-  toolbar_.UncheckCurrentAction();
-  EXPECT_FALSE(actions_[0]->isChecked());
+  pressActionButton(actions[0]);
+  toolbar.UncheckCurrentAction();
+  EXPECT_FALSE(actions[0]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, UncheckCurrentActionInterfaceWithoutActiveAction) {
-  toolbar_.UncheckCurrentAction();
-  EXPECT_FALSE(actions_[0]->isChecked());
-  EXPECT_FALSE(actions_[1]->isChecked());
+  toolbar.UncheckCurrentAction();
+  EXPECT_FALSE(actions[0]->isChecked());
+  EXPECT_FALSE(actions[1]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, ActionIsUncheckedWhenPressingOtherButton) {
-  pressActionButton(actions_[0]);
-  pressActionButton(actions_[1]);
-  EXPECT_FALSE(actions_[0]->isChecked());
+  pressActionButton(actions[0]);
+  pressActionButton(actions[1]);
+  EXPECT_FALSE(actions[0]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, ActionIsUncheckedWhenPressingActiveButton) {
-  pressActionButton(actions_[0]);
-  pressActionButton(actions_[0]);
-  EXPECT_FALSE(actions_[0]->isChecked());
+  pressActionButton(actions[0]);
+  pressActionButton(actions[0]);
+  EXPECT_FALSE(actions[0]->isChecked());
 }
 
 TEST_F(TestExclusiveToolBar, ActionIsSwitchedWhenPressingOtherButton) {
-  pressActionButton(actions_[0]);
-  pressActionButton(actions_[1]);
-  EXPECT_TRUE(actions_[1]->isChecked());
+  pressActionButton(actions[0]);
+  pressActionButton(actions[1]);
+  EXPECT_TRUE(actions[1]->isChecked());
 }
 
 }  // namespace statemachinecreator::gui::test

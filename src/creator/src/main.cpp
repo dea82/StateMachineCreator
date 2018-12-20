@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
   statemachinecreator::gui::factory::InitResources();
 
-  auto mainWindow = statemachinecreator::gui::factory::createMainWindow();
+  auto mainWindow = statemachinecreator::gui::factory::CreateMainWindow();
   mainWindow->show();
 
   return QApplication::exec();

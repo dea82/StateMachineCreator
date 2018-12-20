@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2018-12-06 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,9 +20,22 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <memory>
+#include <QGraphicsItem>
 
-namespace statemachinecreator::model {
-  class IState;
-  using IStateSP = std::shared_ptr<IState>;
+#include "model/i_state_fwd.h"
+
+namespace statemachinecreator::gui {
+
+class StateGraphicsItem : public QGraphicsItem {
+ public:
+  explicit StateGraphicsItem(model::IState* state) : state_{state} {}
+
+ public:
+  QRectF boundingRect() const override;
+
+  void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+ private:
+  model::IState* state_;
+};
+
 }

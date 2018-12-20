@@ -18,17 +18,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "model/Factory.hpp"
+#include "exclusive_checkable_tool_bar.h"
 
-#include <memory>
+namespace statemachinecreator::gui {
 
-#include "model/State.hpp"
-
-namespace statemachinecreator::model::factory {
-
-
-IStateSP createState(const std::string& name) {
-  return std::make_shared<State>(name);
+ExclusiveCheckableToolBar::ExclusiveCheckableToolBar(QWidget* parent)
+    : QToolBar(parent),
+      last_checked_action_() {
+  connect(this, &QToolBar::actionTriggered, this, &ExclusiveCheckableToolBar::ActionTriggered);
 }
 
+void ExclusiveCheckableToolBar::ActionTriggered(QAction* action) noexcept {
+  UncheckCurrentAction();
+  last_checked_action_ = action;
 }
+
+void ExclusiveCheckableToolBar::UncheckCurrentAction() noexcept {
+  if (last_checked_action_) {
+    last_checked_action_->setChecked(false);
+    last_checked_action_ = nullptr;
+  }
+}
+
+}  // namespace statemachinecreator::gui

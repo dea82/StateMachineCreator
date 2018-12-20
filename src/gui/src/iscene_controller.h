@@ -20,12 +20,14 @@ THE SOFTWARE.
 
 #pragma once
 
-class QMainWindow;
+class QGraphicsScene;
 
-namespace statemachinecreator::gui::factory {
+namespace statemachinecreator::gui {
 
-void InitResources();
+class ISceneController {
+ public:
+  virtual ~ISceneController() = default;
+  virtual QGraphicsScene * ActiveScene() const = 0;
+};
 
-QMainWindow* CreateMainWindow();
-
-}  // namespace statemachinecreator::gui::factory
+}
