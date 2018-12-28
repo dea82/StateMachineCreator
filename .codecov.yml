@@ -3,7 +3,7 @@ coverage:
   round: nearest
   precision: 2
 fixes:
-  - "src/::"
+  - "::src/"
 ignore:
   - "gui/test"
   - "model/test"
