@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018-12-06 Andreas
+Copyright (c) 2018-12-22 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,21 +18,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "element_graphics_item_builder.h"
-#include "state_graphics_item.h"
-#include "model/ielement.h"
+#include <memory>
+#include <gmock/gmock.h>
 
-namespace statemachinecreator::gui {
+#include "i_scene_controller.h"
+#include "state_machine_scene.h"
+#include "mock/mock_scene_controller.h"
 
+using namespace ::testing;
 
+namespace statemachinecreator::gui::test {
 
-std::unique_ptr<QGraphicsItem> ElementGraphicsItemBuilder::Build(model::IElement* element) {
-  element->Accept(this);
-  return std::move(element_graphics_item_);
-}
+struct TestStateMachineScene : public Test {
+  TestStateMachineScene() : state_machine_scene{std::make_unique<MockSceneController>()} {}
+  StateMachineScene state_machine_scene;
+};
 
-void ElementGraphicsItemBuilder::Visit(model::IState* state) {
-  element_graphics_item_ = factory_->CreateStateGraphicsItem(state);
+TEST_F(TestStateMachineScene, GetSceneController) {
+  EXPECT_THAT(state_machine_scene.Controller(), NotNull());
 }
 
 }

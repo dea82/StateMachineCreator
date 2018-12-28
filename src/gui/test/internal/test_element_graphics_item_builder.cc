@@ -20,25 +20,26 @@ THE SOFTWARE.
 
 #include <memory>
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include "model/factory.h"
 #include "model/i_state.h"
 #include "element_graphics_item_builder.h"
+#include "element_graphics_item_factory.h"
 
 using namespace ::testing;
 
 namespace statemachinecreator::gui::test {
 
 struct TestElementGraphicsItemBuilder : public Test {
-  TestElementGraphicsItemBuilder() : state{model::factory::CreateState("default")}, builder{} {}
+  TestElementGraphicsItemBuilder() : state{model::factory::CreateState("default")},
+                                     builder{factory::CreateElementGraphicsFactory()} {}
   model::IStateUP state;
   ElementGraphicsItemBuilder builder;
 };
 
 TEST_F(TestElementGraphicsItemBuilder, StateGraphicsItemReturned) {
-  auto state_graphics_item = builder.Build(state.get());
-  EXPECT_NE(state_graphics_item, nullptr);
+  EXPECT_THAT(builder.Build(state.get()), NotNull());
 }
 
 }

@@ -55,7 +55,7 @@ QMainWindow* CreateMainWindow() {
   auto graphics_scene = new QGraphicsScene(-300, -300, 600, 600);
   graphics_view->setScene(graphics_scene);
   auto insert_controller = new InsertController();
-  QObject::connect(action, &QAction::triggered, [insert_controller, graphics_scene] (bool triggered) {
+  QObject::connect(action, &QAction::triggered, [insert_controller, graphics_scene] (bool /*triggered*/) {
     insert_controller->StartInsert(graphics_scene, model::factory::CreateState("Bar"));
   });
   main_window->setCentralWidget(graphics_view);

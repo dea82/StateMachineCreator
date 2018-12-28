@@ -30,7 +30,6 @@ class StateGraphicsItem : public QGraphicsItem {
  public:
   explicit StateGraphicsItem(model::IState* state) : state_{state} {}
 
- public:
   QRectF boundingRect() const override;
 
   void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;

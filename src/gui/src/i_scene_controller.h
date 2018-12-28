@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018-12-06 Andreas
+Copyright (c) 2018 andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,21 +18,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "element_graphics_item_builder.h"
-#include "state_graphics_item.h"
-#include "model/ielement.h"
+#pragma once
 
 namespace statemachinecreator::gui {
 
-
-
-std::unique_ptr<QGraphicsItem> ElementGraphicsItemBuilder::Build(model::IElement* element) {
-  element->Accept(this);
-  return std::move(element_graphics_item_);
-}
-
-void ElementGraphicsItemBuilder::Visit(model::IState* state) {
-  element_graphics_item_ = factory_->CreateStateGraphicsItem(state);
-}
+class ISceneController {
+ public:
+  virtual ~ISceneController() = default;
+};
 
 }

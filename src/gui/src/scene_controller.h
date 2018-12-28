@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018-12-06 Andreas
+Copyright (c) 2018-12-21 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,21 +18,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "element_graphics_item_builder.h"
+#pragma once
+
+#include <memory>
+#include <utility>
+
+#include <QUndoStack>
+
 #include "state_graphics_item.h"
-#include "model/ielement.h"
+#include "i_scene_controller.h"
+
+namespace {
+class NewStateCommand : public QUndoCommand {
+ public:
+  NewStateCommand(StateGraphicsItem* state_graphics_item) : state_graphics_item_{(state_graphics_item} {
+  }
+  ~NewStateCommand() {
+
+  }
+  void redo() override {
+    // Would it be possible to remove the item from the scene instead and move ownership
+    state_graphics_item_->show();
+  }
+  void undo() override {
+    state_graphics_item_->hide();
+  }
+ private:
+  StateGraphicsItem* state_graphics_item_;
+};
+
+}
 
 namespace statemachinecreator::gui {
 
+class SceneController : public ISceneController {
+ public:
+  SceneController() : undo_stack_{} {}
+  void AddState(StateGraphicsItem* state_graphics_item) override {
+    undo_stack_.push(new NewStateCommand(state_graphics_item));
+  }
+ private:
+  QUndoStack undo_stack_;
+};
 
-
-std::unique_ptr<QGraphicsItem> ElementGraphicsItemBuilder::Build(model::IElement* element) {
-  element->Accept(this);
-  return std::move(element_graphics_item_);
 }
 
-void ElementGraphicsItemBuilder::Visit(model::IState* state) {
-  element_graphics_item_ = factory_->CreateStateGraphicsItem(state);
-}
-
-}

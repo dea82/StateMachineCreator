@@ -28,7 +28,7 @@ QRectF StateGraphicsItem::boundingRect() const {
   return QRectF(-30, -30, 60, 60);
 }
 
-void StateGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+void StateGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/, QWidget* /*widget*/) {
   painter->drawRoundedRect(-30, -30, 60, 60, 5, 5);
 }
 

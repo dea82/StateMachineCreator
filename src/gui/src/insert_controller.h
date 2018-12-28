@@ -22,6 +22,7 @@ THE SOFTWARE.
 #include <memory>
 
 #include <QObject>
+#include <QGraphicsItem>
 
 #include "iinsert_controller.h"
 
@@ -53,7 +54,6 @@ class InsertController : public QObject, public IInsertController {
   std::unique_ptr<model::IElement> temporary_element_;
   QGraphicsItem* element_graphics_item_;
   QGraphicsScene* observed_scene_;
-
 };
 
 }

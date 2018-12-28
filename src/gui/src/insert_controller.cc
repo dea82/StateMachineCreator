@@ -18,22 +18,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <QEvent>
+#include "insert_controller.h"
+
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QMouseEvent>
 #include <QEvent>
 #include <QPoint>
-#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneEvent>
 
 #include "element_graphics_item_builder.h"
-#include "insert_controller.h"
+#include "element_graphics_item_factory.h"
 
 namespace statemachinecreator::gui {
 
 void InsertController::StartInsert(QGraphicsScene* scene, std::unique_ptr<model::IElement> element) {
+  // TODO: Should this method set mouse tracking to true?
   observed_scene_ = scene;
   observed_scene_->installEventFilter(this);
   temporary_element_ = std::move(element);
@@ -41,13 +42,16 @@ void InsertController::StartInsert(QGraphicsScene* scene, std::unique_ptr<model:
 
 void InsertController::FinishInsert() {
   observed_scene_->removeEventFilter(this);
-  temporary_element_ = nullptr;
   element_graphics_item_ = nullptr;
+  // TODO: Move ownership of temporary element to correct state in main model
 }
 
 void InsertController::AbortInsert() {
+  observed_scene_->removeEventFilter(this);
   observed_scene_->removeItem(element_graphics_item_);
-  FinishInsert();
+  delete element_graphics_item_;
+  element_graphics_item_ = nullptr;
+  temporary_element_.reset(nullptr);
 }
 
 bool InsertController::eventFilter(QObject* /*object*/, QEvent* event) {
@@ -62,9 +66,11 @@ bool InsertController::eventFilter(QObject* /*object*/, QEvent* event) {
 }
 
 void InsertController::CreateElementGraphics() {
-  ElementGraphicsItemBuilder builder;
-  element_graphics_item_ = builder.Build(temporary_element_.get());
-  observed_scene_->addItem(element_graphics_item_);
+  ElementGraphicsItemBuilder builder(factory::CreateElementGraphicsFactory());
+  auto element_graphics_item = builder.Build(temporary_element_.get());
+  element_graphics_item_ = element_graphics_item.get();
+  // Takes ownership of graphics item
+  observed_scene_->addItem(element_graphics_item.release());
 }
 
-}
+}  // namespace statemachinecreator::gui
