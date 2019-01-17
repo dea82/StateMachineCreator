@@ -32,9 +32,10 @@ class IInsertController {
  public:
   virtual ~IInsertController() = default;
   virtual bool IsInserting() = 0;
-  virtual void StartInsert(QGraphicsScene * scene, model::IElementUP state) = 0;
+  virtual void StartInsert(model::IElementUP state) = 0;
   virtual void AbortInsert() = 0;
   virtual void FinishInsert() = 0;
+  Q_SIGNAL virtual void InsertFinished() = 0;
 };
 
 }

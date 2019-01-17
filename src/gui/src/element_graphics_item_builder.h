@@ -24,9 +24,10 @@ THE SOFTWARE.
 
 #include <QGraphicsItem>
 
-#include "i_element_graphics_item_factory.h"
 #include "model/ielement_visitor.h"
 #include "model/ielement.h"
+
+#include "i_element_graphics_item_factory.h"
 
 class QGraphicsItem;
 

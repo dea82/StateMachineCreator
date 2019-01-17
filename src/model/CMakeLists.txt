@@ -1,6 +1,5 @@
 include(GoogleTest)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 file(GLOB_RECURSE SRC_FILES "src/model/*.cpp" "src/model/*.cc")
 
 add_library(model ${SRC_FILES})

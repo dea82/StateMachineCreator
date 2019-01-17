@@ -13,7 +13,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp src/*.cc src/*.h resources/*.qrc)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.cc resources/*.qrc)
 file(GLOB_RECURSE UI_FILES src/*.ui)
 
 add_library(${TARGET_NAME} ${SRC_FILES} ${UI_FILES})
@@ -26,7 +26,6 @@ target_include_directories(${TARGET_NAME}  PUBLIC include)
 target_include_directories(${TARGET_NAME} PRIVATE src ${CMAKE_SOURCE_DIR}/generated/include)
 
 include(GoogleTest)
-find_package(Qt5Core REQUIRED)
 find_package(Qt5Test REQUIRED)
 
 # Internal API test

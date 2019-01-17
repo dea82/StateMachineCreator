@@ -20,6 +20,7 @@ THE SOFTWARE.
 
 #include "insert_controller.h"
 
+#include <QDebug>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QMouseEvent>
@@ -33,9 +34,7 @@ THE SOFTWARE.
 
 namespace statemachinecreator::gui {
 
-void InsertController::StartInsert(QGraphicsScene* scene, std::unique_ptr<model::IElement> element) {
-  // TODO: Should this method set mouse tracking to true?
-  observed_scene_ = scene;
+void InsertController::StartInsert(std::unique_ptr<model::IElement> element) {
   observed_scene_->installEventFilter(this);
   temporary_element_ = std::move(element);
 }
@@ -43,15 +42,21 @@ void InsertController::StartInsert(QGraphicsScene* scene, std::unique_ptr<model:
 void InsertController::FinishInsert() {
   observed_scene_->removeEventFilter(this);
   element_graphics_item_ = nullptr;
+  // TODO: Should this work?
+  //auto controller = observed_scene_->Controller();
+  emit InsertFinished();
   // TODO: Move ownership of temporary element to correct state in main model
 }
 
 void InsertController::AbortInsert() {
   observed_scene_->removeEventFilter(this);
-  observed_scene_->removeItem(element_graphics_item_);
-  delete element_graphics_item_;
-  element_graphics_item_ = nullptr;
+  if (element_graphics_item_) {
+    observed_scene_->removeItem(element_graphics_item_);
+    delete element_graphics_item_;
+    element_graphics_item_ = nullptr;
+  }
   temporary_element_.reset(nullptr);
+  emit InsertFinished();
 }
 
 bool InsertController::eventFilter(QObject* /*object*/, QEvent* event) {

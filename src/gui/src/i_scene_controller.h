@@ -22,9 +22,12 @@ THE SOFTWARE.
 
 namespace statemachinecreator::gui {
 
+class StateGraphicsItem;
+
 class ISceneController {
  public:
   virtual ~ISceneController() = default;
+  virtual void AddState(StateGraphicsItem* state_graphics_item) = 0;
 };
 
 }

@@ -43,7 +43,7 @@ struct TestInsertController : Test {
   TestInsertController() :
       observed_scene{},
       graphics_view{&observed_scene},
-      insert_controller{std::make_unique<InsertController>()} {
+      insert_controller{std::make_unique<InsertController>(&observed_scene)} {
     graphics_view.viewport()->setMouseTracking(true);
   }
   QGraphicsScene observed_scene;
@@ -53,7 +53,7 @@ struct TestInsertController : Test {
 
 struct InsertStateHasBeenPressed : TestInsertController {
   InsertStateHasBeenPressed() {
-    insert_controller->StartInsert(&observed_scene, model::factory::CreateState("Name"));
+    insert_controller->StartInsert(model::factory::CreateState("Name"));
   }
 };
 
@@ -100,6 +100,11 @@ TEST_F(InsertStateHasBeenPressed, TemporaryElementCreatedStopsFollowingMouseWhen
 
 TEST_F(InsertStateHasBeenPressed, TemporaryElementInsertAborted) {
   testhelpers::qt::MouseMoveToScenePos(&graphics_view, {80, 80});
+  insert_controller->AbortInsert();
+  EXPECT_THAT(observed_scene.items().size(), Eq(0));
+}
+
+TEST_F(InsertStateHasBeenPressed, AbortIsPossibleWithoutTemporaryElement) {
   insert_controller->AbortInsert();
   EXPECT_THAT(observed_scene.items().size(), Eq(0));
 }

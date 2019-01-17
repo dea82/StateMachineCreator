@@ -30,12 +30,19 @@ using namespace ::testing;
 namespace statemachinecreator::gui::test {
 
 struct TestStateMachineScene : public Test {
-  TestStateMachineScene() : state_machine_scene{std::make_unique<MockSceneController>()} {}
-  StateMachineScene state_machine_scene;
+  TestStateMachineScene() : owner{}, state_machine_scene{new StateMachineScene(&owner)} {}
+  QObject owner;
+  StateMachineScene* state_machine_scene;
 };
 
-TEST_F(TestStateMachineScene, GetSceneController) {
-  EXPECT_THAT(state_machine_scene.Controller(), NotNull());
+TEST_F(TestStateMachineScene, EmptySceneControllerAfterConstruction) {
+  EXPECT_THAT(state_machine_scene->Controller(), IsNull());
+}
+
+TEST_F(TestStateMachineScene, SetSceneController) {
+  auto scene_controller = std::make_unique<MockSceneController>();
+  state_machine_scene->Controller(scene_controller.get());
+  EXPECT_THAT(state_machine_scene->Controller(), NotNull());
 }
 
 }

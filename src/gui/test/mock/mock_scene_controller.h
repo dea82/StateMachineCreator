@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 namespace statemachinecreator::gui {
 class MockSceneController : public ISceneController {
-
+  MOCK_METHOD1(AddState, void(StateGraphicsItem*));
 };
 
 }

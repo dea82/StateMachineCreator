@@ -25,29 +25,34 @@ THE SOFTWARE.
 #include <QGraphicsItem>
 
 #include "iinsert_controller.h"
+#include "model/ielement.h"
 
 class QGraphicsItem;
 
 namespace statemachinecreator::gui {
 
 class InsertController : public QObject, public IInsertController {
+ Q_OBJECT
  public:
-  explicit InsertController() : temporary_element_{nullptr},
+  // TODO: Initialize QObject with parent parameter
+  explicit InsertController(QGraphicsScene* graphics_scene) : temporary_element_{nullptr},
                                 element_graphics_item_{nullptr},
-                                observed_scene_{nullptr} {}
+                                observed_scene_{graphics_scene} {}
 
   bool IsInserting() override {
     return temporary_element_ != nullptr;
   }
-  void StartInsert(QGraphicsScene* scene, std::unique_ptr<model::IElement> element) override;
+  void StartInsert(std::unique_ptr<model::IElement> element) override;
 
   void FinishInsert() override;
 
   void AbortInsert() override;
 
-  bool eventFilter(QObject* object, QEvent* event) override;
+  // TODO: Rename or duplicate
+  Q_SIGNAL void InsertFinished() override;
 
  private:
+  bool eventFilter(QObject* object, QEvent* event) override;
   //TODO: This should probably be moved to a "SceneController" which can return a pointer to the created element.
   void CreateElementGraphics();
 

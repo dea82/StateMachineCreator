@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 #include "model/factory.h"
 #include "model/i_state.h"
+
 #include "element_graphics_item_builder.h"
 #include "element_graphics_item_factory.h"
 

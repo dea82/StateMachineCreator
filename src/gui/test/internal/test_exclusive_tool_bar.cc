@@ -100,4 +100,11 @@ TEST_F(TestExclusiveToolBar, ActionIsSwitchedWhenPressingOtherButton) {
   EXPECT_TRUE(actions[1]->isChecked());
 }
 
+TEST_F(TestExclusiveToolBar, ActionIsCheckedWhenPressingActiveButtonAfterUnchecking) {
+  pressActionButton(actions[0]);
+  pressActionButton(actions[0]);
+  pressActionButton(actions[0]);
+  EXPECT_TRUE(actions[0]->isChecked());
+}
+
 }  // namespace statemachinecreator::gui::test

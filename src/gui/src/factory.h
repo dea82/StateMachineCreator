@@ -20,21 +20,17 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <memory>
-
-#include "element_graphics_item_builder.h"
 class QAction;
-class QGraphicsScene;
 class QIcon;
 class QObject;
 class QString;
-class QToolBar;
-class QWidget;
+
+namespace statemachinecreator::gui {
 
 
-namespace statemachinecreator::gui::factory {
+namespace factory {
 
-QToolBar* CreateInsertToolBar(QWidget* parent);
-QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent = nullptr);
+QAction* CreateInsertAction(const QIcon& icon, const QString& text, QObject* parent);
 
+}
 }

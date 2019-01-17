@@ -29,14 +29,18 @@ namespace statemachinecreator::gui {
 
 class StateMachineScene : public QGraphicsScene {
  public:
-  explicit StateMachineScene(ISceneControllerUP scene_controller) : scene_controller_{std::move(scene_controller)} {
-
+  explicit StateMachineScene(QObject* parent) : QGraphicsScene{parent}, scene_controller_{nullptr} {
   }
+  // TODO: Are these necessary?
   ISceneController* Controller() const {
-    return scene_controller_.get();
+    return scene_controller_;
+  }
+  // TODO: Are these necessary?
+  void Controller(ISceneController* controller) {
+    scene_controller_ = controller;
   }
  private:
-  ISceneControllerUP scene_controller_;
+  ISceneController* scene_controller_; // Non ownership
 };
 
 }

@@ -23,6 +23,7 @@ THE SOFTWARE.
 #include <memory>
 #include <utility>
 
+#include <QGraphicsScene>
 #include <QUndoStack>
 
 #include "state_graphics_item.h"
@@ -31,7 +32,9 @@ THE SOFTWARE.
 namespace {
 class NewStateCommand : public QUndoCommand {
  public:
-  NewStateCommand(StateGraphicsItem* state_graphics_item) : state_graphics_item_{(state_graphics_item} {
+  explicit NewStateCommand(statemachinecreator::gui::StateGraphicsItem* state_graphics_item) : state_graphics_item_{
+      state_graphics_item} {
+    setText("insert state");
   }
   ~NewStateCommand() {
 
@@ -44,21 +47,28 @@ class NewStateCommand : public QUndoCommand {
     state_graphics_item_->hide();
   }
  private:
-  StateGraphicsItem* state_graphics_item_;
+  statemachinecreator::gui::StateGraphicsItem* state_graphics_item_;
 };
 
 }
 
 namespace statemachinecreator::gui {
 
-class SceneController : public ISceneController {
+class SceneController : public QObject, public ISceneController {
+ Q_OBJECT
  public:
-  SceneController() : undo_stack_{} {}
-  void AddState(StateGraphicsItem* state_graphics_item) override {
-    undo_stack_.push(new NewStateCommand(state_graphics_item));
+  explicit SceneController(QGraphicsScene* parent) : QObject{parent}, undo_stack_{new QUndoStack()} {
+    QObject::connect(undo_stack_, &QUndoStack::canUndoChanged, this, &SceneController::canUndoChanged);
   }
+
+  void AddState(StateGraphicsItem* state_graphics_item) override {
+    undo_stack_->push(new NewStateCommand(state_graphics_item));
+  }
+
+  Q_SIGNAL void canUndoChanged(bool canRedo);
+
  private:
-  QUndoStack undo_stack_;
+  QUndoStack* undo_stack_;
 };
 
 }

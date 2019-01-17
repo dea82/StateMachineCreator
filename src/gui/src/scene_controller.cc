@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2019-01-16 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,29 +18,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "exclusive_checkable_tool_bar.h"
+#include "scene_controller.h"
 
-namespace statemachinecreator::gui {
-
-ExclusiveCheckableToolBar::ExclusiveCheckableToolBar(QWidget* parent)
-    : QToolBar(parent),
-      last_checked_action_() {
-  connect(this, &QToolBar::actionTriggered, this, &ExclusiveCheckableToolBar::ActionTriggered);
-}
-
-void ExclusiveCheckableToolBar::ActionTriggered(QAction* action) noexcept {
-  if (last_checked_action_) {
-    UncheckCurrentAction();
-  } else {
-    last_checked_action_ = action;
-  }
-}
-
-void ExclusiveCheckableToolBar::UncheckCurrentAction() noexcept {
-  if (last_checked_action_) {
-    last_checked_action_->setChecked(false);
-    last_checked_action_ = nullptr;
-  }
-}
-
-}  // namespace statemachinecreator::gui
