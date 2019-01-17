@@ -42,3 +42,6 @@ conan-install.json
 
 # Python
 *.pyc
+
+# Generated files
+generated/
