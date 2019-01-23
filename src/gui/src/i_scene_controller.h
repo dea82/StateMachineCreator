@@ -20,14 +20,16 @@ THE SOFTWARE.
 
 #pragma once
 
-namespace statemachinecreator::gui {
+class QGraphicsItem;
+class QGraphicsScene;
 
-class StateGraphicsItem;
+namespace statemachinecreator::gui {
 
 class ISceneController {
  public:
   virtual ~ISceneController() = default;
-  virtual void AddState(StateGraphicsItem* state_graphics_item) = 0;
+  virtual void AddElement(QGraphicsItem* graphics_item) = 0;
+  virtual QGraphicsScene* Scene() const = 0;
 };
 
 }

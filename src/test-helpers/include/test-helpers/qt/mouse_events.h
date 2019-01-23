@@ -25,22 +25,26 @@ THE SOFTWARE.
 
 namespace testhelpers::qt {
 
-void MouseMove(QWidget* target_widget, const QPointF &point, Qt::MouseButton button = Qt::NoButton) {
+void MouseMove(QWidget* target_widget, const QPointF& point, Qt::MouseButton button = Qt::NoButton) {
   QApplication::postEvent(target_widget, new QMouseEvent(QEvent::MouseMove, point, button, 0, Qt::NoModifier));
   QApplication::processEvents();
 }
 
-void MouseMoveToScenePos(QGraphicsView * graphics_view, const QPoint& point, Qt::MouseButton button = Qt::NoButton) {
+void MouseMoveToScenePos(QGraphicsView* graphics_view, const QPoint& point, Qt::MouseButton button = Qt::NoButton) {
   MouseMove(graphics_view->viewport(), graphics_view->mapFromScene(point), button);
 }
 
-void MouseClickAndRelease(QWidget* target_widget, const QPoint &point, Qt::MouseButton button = Qt::LeftButton) {
-  QApplication::postEvent(target_widget, new QMouseEvent(QEvent::MouseButtonPress, point, button, nullptr, Qt::NoModifier));
-  QApplication::postEvent(target_widget, new QMouseEvent(QEvent::MouseButtonRelease, point, button, nullptr, Qt::NoModifier));
+void MouseClickAndRelease(QWidget* target_widget, const QPoint& point, Qt::MouseButton button = Qt::LeftButton) {
+  QApplication::postEvent(target_widget,
+                          new QMouseEvent(QEvent::MouseButtonPress, point, button, nullptr, Qt::NoModifier));
+  QApplication::postEvent(target_widget,
+                          new QMouseEvent(QEvent::MouseButtonRelease, point, button, nullptr, Qt::NoModifier));
   QApplication::processEvents();
 }
 
-void MouseClickAndReleaseScenePos(QGraphicsView * graphics_view, const QPoint& point, Qt::MouseButton button = Qt::LeftButton) {
+void MouseClickAndReleaseScenePos(QGraphicsView* graphics_view,
+                                  const QPoint& point,
+                                  Qt::MouseButton button = Qt::LeftButton) {
   MouseClickAndRelease(graphics_view->viewport(), graphics_view->mapFromScene(point), button);
 }
 

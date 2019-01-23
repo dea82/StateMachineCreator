@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018-12-21 Andreas
+Copyright (c) 2018 andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,18 +20,19 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <QGraphicsScene>
+#include <memory>
+
+#include "model/ielement_fwd.h"
+
+class QGraphicsScene;
 
 namespace statemachinecreator::gui {
 
-// TODO: If this class is not necessary skip it and make SceneController the master class and let it have this or
-//  base QGraphicsScene a composition of that class - DONE
-class StateMachineScene : public QGraphicsScene {
+class IInsertController {
  public:
-  explicit StateMachineScene(QObject* parent) : QGraphicsScene{parent} {
-  }
-
- private:
+  virtual ~IInsertController() = default;
+  virtual void StartInsert(model::IElementUP state) = 0;
+  virtual void AbortInsert() = 0;
 };
 
 }

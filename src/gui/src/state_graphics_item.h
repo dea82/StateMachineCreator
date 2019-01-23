@@ -21,6 +21,8 @@ THE SOFTWARE.
 #pragma once
 
 #include <QGraphicsItem>
+#include <QDebug>
+#include <QGraphicsScene>
 
 #include "model/i_state_fwd.h"
 
@@ -28,7 +30,9 @@ namespace statemachinecreator::gui {
 
 class StateGraphicsItem : public QGraphicsItem {
  public:
-  explicit StateGraphicsItem(model::IState* state) : state_{state} {}
+  explicit StateGraphicsItem(model::IState* state) : state_{state} {
+    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+  }
 
   QRectF boundingRect() const override;
 

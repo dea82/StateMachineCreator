@@ -31,27 +31,28 @@ THE SOFTWARE.
 
 #include "element_graphics_item_builder.h"
 #include "element_graphics_item_factory.h"
+#include "state_graphics_item.h"
 
 namespace statemachinecreator::gui {
 
 void InsertController::StartInsert(std::unique_ptr<model::IElement> element) {
-  observed_scene_->installEventFilter(this);
+  ObserveredScene()->installEventFilter(this);
   temporary_element_ = std::move(element);
 }
 
 void InsertController::FinishInsert() {
-  observed_scene_->removeEventFilter(this);
+  ObserveredScene()->removeEventFilter(this);
+  scene_controller_->AddElement(element_graphics_item_);
   element_graphics_item_ = nullptr;
-  // TODO: Should this work?
-  //auto controller = observed_scene_->Controller();
   emit InsertFinished();
   // TODO: Move ownership of temporary element to correct state in main model
 }
 
 void InsertController::AbortInsert() {
-  observed_scene_->removeEventFilter(this);
+  auto observed_scene = ObserveredScene();
+  observed_scene->removeEventFilter(this);
   if (element_graphics_item_) {
-    observed_scene_->removeItem(element_graphics_item_);
+    observed_scene->removeItem(element_graphics_item_);
     delete element_graphics_item_;
     element_graphics_item_ = nullptr;
   }
@@ -75,7 +76,7 @@ void InsertController::CreateElementGraphics() {
   auto element_graphics_item = builder.Build(temporary_element_.get());
   element_graphics_item_ = element_graphics_item.get();
   // Takes ownership of graphics item
-  observed_scene_->addItem(element_graphics_item.release());
+  ObserveredScene()->addItem(element_graphics_item.release());
 }
 
 }  // namespace statemachinecreator::gui

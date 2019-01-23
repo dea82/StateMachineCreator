@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018-12-21 Andreas
+Copyright (c) 2018-12-29 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,20 +18,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
+#include <gmock/gmock.h>
 
-#include <QGraphicsScene>
+#include "scene_controller.h"
 
-namespace statemachinecreator::gui {
+using namespace ::testing;
 
-// TODO: If this class is not necessary skip it and make SceneController the master class and let it have this or
-//  base QGraphicsScene a composition of that class - DONE
-class StateMachineScene : public QGraphicsScene {
- public:
-  explicit StateMachineScene(QObject* parent) : QGraphicsScene{parent} {
+namespace statemachinecreator::gui::test {
+
+struct TestSceneController : public Test {
+  TestSceneController() : owner{},
+                          scene_controller{new SceneController(nullptr, &owner)} {
   }
-
- private:
+  QObject owner;
+  SceneController* scene_controller;
 };
+
+TEST_F(TestSceneController, ParentIsSetAtConstruction) {
+  EXPECT_EQ(&owner, scene_controller->parent());
+}
 
 }

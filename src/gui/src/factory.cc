@@ -73,19 +73,21 @@ void InitResources() {
 
 QMainWindow* CreateMainWindow() {
   auto main_window = new MainWindow();
+  // Graphics View
   auto graphics_view = new QGraphicsView();
   graphics_view->viewport()->setMouseTracking(true);
-
-  auto state_machine_scene = new StateMachineScene(graphics_view);
-  auto scene_controller = new SceneController(state_machine_scene);
-
-  state_machine_scene->Controller(scene_controller);
-
-  graphics_view->setScene(state_machine_scene);
   main_window->setCentralWidget(graphics_view);
 
+  // Scene
+  auto state_machine_scene = new StateMachineScene(graphics_view);
+  graphics_view->setScene(state_machine_scene);
+
+  // Scene Controller
+  auto scene_controller = new SceneController(state_machine_scene, main_window);
+
+  // Insert Tool Bar
   auto toolbar = CreateInsertToolBar(main_window);
-  auto insert_controller = new InsertController(state_machine_scene);
+  auto insert_controller = new InsertController(scene_controller, main_window);
 
   // Cancel action
   auto cancel_action = new QAction("Cancel", main_window);
@@ -105,12 +107,22 @@ QMainWindow* CreateMainWindow() {
   // Main toolbar
   auto main_tool_bar = new QToolBar(main_window);
   // TODO: This action should be added to menu, button and shortcut key
-  auto undo_action = new QAction("Undo", main_window);
-  undo_action->setShortcuts(QKeySequence::Undo);
-  main_tool_bar->addAction(undo_action);
-  main_window->addToolBar(Qt::TopToolBarArea, main_tool_bar);
 
-  QObject::connect(scene_controller, &SceneController::canUndoChanged, undo_action, &QAction::setEnabled);
+  auto undo_action = new QAction("Undo", main_window);
+  undo_action->setEnabled(false);
+  undo_action->setShortcuts(QKeySequence::Undo);
+  QObject::connect(undo_action, &QAction::triggered, scene_controller, &SceneController::Undo);
+  main_tool_bar->addAction(undo_action);
+  QObject::connect(scene_controller, &SceneController::CanUndoChanged, undo_action, &QAction::setEnabled);
+
+  auto redo_action = new QAction("Redo", main_window);
+  redo_action->setEnabled(false);
+  redo_action->setShortcuts(QKeySequence::Redo);
+  QObject::connect(redo_action, &QAction::triggered, scene_controller, &SceneController::Redo);
+  main_tool_bar->addAction(redo_action);
+  QObject::connect(scene_controller, &SceneController::CanRedoChanged, redo_action, &QAction::setEnabled);
+
+  main_window->addToolBar(Qt::TopToolBarArea, main_tool_bar);
 
   return main_window;
 }

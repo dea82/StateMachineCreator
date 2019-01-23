@@ -22,10 +22,11 @@ THE SOFTWARE.
 #include <memory>
 
 #include <QObject>
-#include <QGraphicsItem>
 
-#include "iinsert_controller.h"
+#include "i_scene_controller.h"
+#include "i_insert_controller.h"
 #include "model/ielement.h"
+#include "state_machine_scene.h"
 
 class QGraphicsItem;
 
@@ -34,31 +35,32 @@ namespace statemachinecreator::gui {
 class InsertController : public QObject, public IInsertController {
  Q_OBJECT
  public:
-  // TODO: Initialize QObject with parent parameter
-  explicit InsertController(QGraphicsScene* graphics_scene) : temporary_element_{nullptr},
-                                element_graphics_item_{nullptr},
-                                observed_scene_{graphics_scene} {}
-
-  bool IsInserting() override {
-    return temporary_element_ != nullptr;
-  }
+  explicit InsertController(ISceneController* scene_controller, QObject* parent) : QObject{parent},
+                                                                                   temporary_element_{nullptr},
+                                                                                   element_graphics_item_{nullptr},
+                                                                                   scene_controller_{
+                                                                                       scene_controller} {}
   void StartInsert(std::unique_ptr<model::IElement> element) override;
-
-  void FinishInsert() override;
 
   void AbortInsert() override;
 
   // TODO: Rename or duplicate
-  Q_SIGNAL void InsertFinished() override;
+  Q_SIGNAL void InsertFinished();
 
  private:
+  void FinishInsert();
+
   bool eventFilter(QObject* object, QEvent* event) override;
-  //TODO: This should probably be moved to a "SceneController" which can return a pointer to the created element.
+  // TODO: This should probably be moved to a "SceneController" which can return a pointer to the created element.
   void CreateElementGraphics();
+
+  QGraphicsScene* ObserveredScene() const {
+    return scene_controller_->Scene();
+  }
 
   std::unique_ptr<model::IElement> temporary_element_;
   QGraphicsItem* element_graphics_item_;
-  QGraphicsScene* observed_scene_;
+  ISceneController* scene_controller_;
 };
 
 }

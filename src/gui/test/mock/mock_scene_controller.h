@@ -24,7 +24,10 @@ THE SOFTWARE.
 
 namespace statemachinecreator::gui {
 class MockSceneController : public ISceneController {
-  MOCK_METHOD1(AddState, void(StateGraphicsItem*));
+ public:
+  MOCK_CONST_METHOD0(Scene, QGraphicsScene*());
+  MOCK_METHOD1(AddElement, void(QGraphicsItem*));
+  MOCK_METHOD1(CanUndoChanged, void(bool));
 };
 
 }

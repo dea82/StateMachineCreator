@@ -30,24 +30,23 @@ THE SOFTWARE.
 #include "i_scene_controller.h"
 
 namespace {
-class NewStateCommand : public QUndoCommand {
+class NewElementCommand : public QUndoCommand {
  public:
-  explicit NewStateCommand(statemachinecreator::gui::StateGraphicsItem* state_graphics_item) : state_graphics_item_{
-      state_graphics_item} {
-    setText("insert state");
+  explicit NewElementCommand(QGraphicsItem* graphics_item) : graphics_item_{
+      graphics_item} {
+    setText("insert element");
   }
-  ~NewStateCommand() {
+  ~NewElementCommand() = default;
 
-  }
   void redo() override {
     // Would it be possible to remove the item from the scene instead and move ownership
-    state_graphics_item_->show();
+    graphics_item_->show();
   }
   void undo() override {
-    state_graphics_item_->hide();
+    graphics_item_->hide();
   }
  private:
-  statemachinecreator::gui::StateGraphicsItem* state_graphics_item_;
+  QGraphicsItem* graphics_item_;
 };
 
 }
@@ -57,17 +56,32 @@ namespace statemachinecreator::gui {
 class SceneController : public QObject, public ISceneController {
  Q_OBJECT
  public:
-  explicit SceneController(QGraphicsScene* parent) : QObject{parent}, undo_stack_{new QUndoStack()} {
-    QObject::connect(undo_stack_, &QUndoStack::canUndoChanged, this, &SceneController::canUndoChanged);
+  explicit SceneController(QGraphicsScene* scene, QObject* parent) : QObject{parent},
+                                                                     scene_{scene},
+                                                                     undo_stack_{new QUndoStack()} {
+    QObject::connect(undo_stack_, &QUndoStack::canUndoChanged, this, &SceneController::CanUndoChanged);
+    QObject::connect(undo_stack_, &QUndoStack::canRedoChanged, this, &SceneController::CanRedoChanged);
   }
 
-  void AddState(StateGraphicsItem* state_graphics_item) override {
-    undo_stack_->push(new NewStateCommand(state_graphics_item));
+  QGraphicsScene* Scene() const override {
+    return scene_;
   }
 
-  Q_SIGNAL void canUndoChanged(bool canRedo);
+  void AddElement(QGraphicsItem* graphics_item) override {
+    undo_stack_->push(new NewElementCommand(graphics_item));
+  }
+
+  void Undo() {
+    undo_stack_->undo();
+  }
+  void Redo() {
+   undo_stack_->redo();
+ }
+  Q_SIGNAL void CanUndoChanged(bool can_undo);
+  Q_SIGNAL void CanRedoChanged(bool can_redo);
 
  private:
+  QGraphicsScene* scene_;
   QUndoStack* undo_stack_;
 };
 

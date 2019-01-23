@@ -1,6 +1,6 @@
 /*
 The MIT License (MIT)
-Copyright (c) 2018 andreas
+Copyright (c) 2019-01-18 Andreas
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -18,24 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include <memory>
+using namespace ::testing;
 
-#include "model/ielement_fwd.h"
+struct TestElementGraphicsItem : public Test {
 
-class QGraphicsScene;
-
-namespace statemachinecreator::gui {
-
-class IInsertController {
- public:
-  virtual ~IInsertController() = default;
-  virtual bool IsInserting() = 0;
-  virtual void StartInsert(model::IElementUP state) = 0;
-  virtual void AbortInsert() = 0;
-  virtual void FinishInsert() = 0;
-  Q_SIGNAL virtual void InsertFinished() = 0;
 };
+
+TEST_F(TestElementGraphicsItem, IsVisitable) {
 
 }
