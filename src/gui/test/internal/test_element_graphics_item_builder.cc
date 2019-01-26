@@ -34,8 +34,10 @@ namespace statemachinecreator::gui::test {
 
 struct TestElementGraphicsItemBuilder : public Test {
   TestElementGraphicsItemBuilder() : state{model::factory::CreateState("default")},
-                                     builder{factory::CreateElementGraphicsFactory()} {}
+                                     graphics_factory{factory::CreateElementGraphicsFactory()},
+                                     builder{graphics_factory.get()} {}
   model::IStateUP state;
+  std::unique_ptr<factory::IElementGraphicsItemFactory> graphics_factory;
   ElementGraphicsItemBuilder builder;
 };
 

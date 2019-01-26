@@ -23,6 +23,8 @@ THE SOFTWARE.
 
 #include <QObject>
 
+#include "factory.h"
+#include "i_element_graphics_item_factory.h"
 #include "i_scene_controller.h"
 #include "i_insert_controller.h"
 #include "model/ielement.h"
@@ -35,11 +37,14 @@ namespace statemachinecreator::gui {
 class InsertController : public QObject, public IInsertController {
  Q_OBJECT
  public:
-  explicit InsertController(ISceneController* scene_controller, QObject* parent) : QObject{parent},
-                                                                                   temporary_element_{nullptr},
-                                                                                   element_graphics_item_{nullptr},
-                                                                                   scene_controller_{
-                                                                                       scene_controller} {}
+  explicit InsertController(ISceneController* scene_controller,
+                            std::unique_ptr<factory::IElementGraphicsItemFactory> graphics_factory,
+                            QObject* parent) :
+      QObject{parent},
+      temporary_element_{nullptr},
+      element_graphics_item_{nullptr},
+      scene_controller_{scene_controller},
+      graphics_factory_{std::move(graphics_factory)} {}
   void StartInsert(std::unique_ptr<model::IElement> element) override;
 
   void AbortInsert() override;
@@ -61,6 +66,7 @@ class InsertController : public QObject, public IInsertController {
   std::unique_ptr<model::IElement> temporary_element_;
   QGraphicsItem* element_graphics_item_;
   ISceneController* scene_controller_;
+  std::unique_ptr<factory::IElementGraphicsItemFactory> graphics_factory_;
 };
 
 }

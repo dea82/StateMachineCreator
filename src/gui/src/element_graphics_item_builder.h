@@ -35,13 +35,14 @@ namespace statemachinecreator::gui {
 
 class ElementGraphicsItemBuilder : public model::IElementVisitor {
  public:
-  explicit ElementGraphicsItemBuilder(std::unique_ptr<factory::IElementGraphicsItemFactory> factory) : factory_{
-      std::move(factory)}, element_graphics_item_{nullptr} {}
+  explicit ElementGraphicsItemBuilder(factory::IElementGraphicsItemFactory* factory) :
+      factory_{factory},
+      element_graphics_item_{nullptr} {}
 
   std::unique_ptr<QGraphicsItem> Build(model::IElement* element);
  private:
   void Visit(model::IState*) override;
-  std::unique_ptr<factory::IElementGraphicsItemFactory> factory_;
+  factory::IElementGraphicsItemFactory* factory_;
   std::unique_ptr<QGraphicsItem> element_graphics_item_;
 };
 

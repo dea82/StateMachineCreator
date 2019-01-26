@@ -72,7 +72,7 @@ bool InsertController::eventFilter(QObject* /*object*/, QEvent* event) {
 }
 
 void InsertController::CreateElementGraphics() {
-  ElementGraphicsItemBuilder builder(factory::CreateElementGraphicsFactory());
+  ElementGraphicsItemBuilder builder(graphics_factory_.get());
   auto element_graphics_item = builder.Build(temporary_element_.get());
   element_graphics_item_ = element_graphics_item.get();
   // Takes ownership of graphics item
