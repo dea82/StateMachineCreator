@@ -32,6 +32,7 @@
 
 #include "exclusive_checkable_tool_bar.h"
 #include "insert_controller.h"
+#include "element_graphics_item_factory.h"
 #include "main_window.hpp"
 #include "state_machine_scene.h"
 #include "scene_controller.h"
@@ -87,7 +88,7 @@ QMainWindow* CreateMainWindow() {
 
   // Insert Tool Bar
   auto toolbar = CreateInsertToolBar(main_window);
-  auto insert_controller = new InsertController(scene_controller, main_window);
+  auto insert_controller = new InsertController(scene_controller, factory::CreateElementGraphicsFactory(), main_window);
 
   // Cancel action
   auto cancel_action = new QAction("Cancel", main_window);

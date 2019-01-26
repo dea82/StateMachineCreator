@@ -30,6 +30,8 @@
 
 #include "model/factory.h"
 #include "model/i_state.h"
+#include "element_graphics_item_factory.h"
+
 #include "insert_controller.h"
 #include "scene_controller.h"
 #include "state_machine_scene.h"
@@ -45,7 +47,8 @@ namespace statemachinecreator::gui::test {
 struct TestInsertController : Test {
   TestInsertController() :
       observed_scene{new StateMachineScene(&graphics_view)},
-      insert_controller{new InsertController(&scene_controller, &graphics_view)} {
+      insert_controller{
+          new InsertController(&scene_controller, factory::CreateElementGraphicsFactory(), &graphics_view)} {
     graphics_view.setScene(observed_scene);
     graphics_view.viewport()->setMouseTracking(true);
   }
