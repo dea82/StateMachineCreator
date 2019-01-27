@@ -4,3 +4,5 @@
 [![codecov](https://codecov.io/gh/dea82/StateMachineCreator/branch/develop/graph/badge.svg)](https://codecov.io/gh/dea82/StateMachineCreator)
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/dea82/StateMachineCreator?branch=develop)](https://bettercodehub.com/)
+
+[![CodeFactor](https://www.codefactor.io/repository/github/dea82/statemachinecreator/badge/develop)](https://www.codefactor.io/repository/github/dea82/statemachinecreator/overview/develop)
