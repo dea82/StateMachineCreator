@@ -19,7 +19,9 @@ THE SOFTWARE.
 */
 
 #pragma once
+
 #include <memory>
+#include <utility>
 
 #include <QObject>
 
@@ -35,7 +37,8 @@ class QGraphicsItem;
 namespace statemachinecreator::gui {
 
 class InsertController : public QObject, public IInsertController {
- Q_OBJECT
+  Q_OBJECT
+
  public:
   explicit InsertController(ISceneController* scene_controller,
                             std::unique_ptr<factory::IElementGraphicsItemFactory> graphics_factory,
@@ -69,4 +72,4 @@ class InsertController : public QObject, public IInsertController {
   std::unique_ptr<factory::IElementGraphicsItemFactory> graphics_factory_;
 };
 
-}
+}  // namespace statemachinecreator::gui
